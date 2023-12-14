@@ -7,6 +7,7 @@ use App\Models\Cabang;
 use App\Models\BahanBaku;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StokController extends Controller
 {
@@ -20,7 +21,11 @@ class StokController extends Controller
     }
     public function data()
     {
-        $stoks = Stok::with('bahan', 'cabang')->get();
+        if (Auth::user()->role == 'admin') {
+            $stoks = Stok::with('bahan', 'cabang')->get();
+        } else {
+            $stoks = Stok::with('bahan', 'cabang')->where('idCabang', Auth::user()->idCabang)->get();
+        }
 
         return datatables()
             ->of($stoks)

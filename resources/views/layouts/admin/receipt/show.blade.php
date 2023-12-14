@@ -41,7 +41,7 @@
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->bahanbaku->name }}</td>
-                                <td>{{ $item->quantity }}</td>
+                                <td>{{ $item->Quantity }}</td>
                             </tr>
                         @endforeach
 

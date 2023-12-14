@@ -22,8 +22,10 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Data Stok Bahan Baku</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    <a href="{{ route('stok.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
-                        </span> Tambah Data</a>
+                    @if (auth()->user()->level == 'admin')
+                        <a href="{{ route('stok.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
+                            </span> Tambah Data</a>
+                    @endif
                 </div>
                 <table class="datatables-basic table">
                     <thead>
@@ -32,7 +34,9 @@
                             <th>Cabang</th>
                             <th>Bahan Baku</th>
                             <th>Stok</th>
-                            <th width="10%">Action</th>
+                            @if (auth()->user()->role == 'admin')
+                                <th width="10%">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -62,18 +66,27 @@
                     url: '{{ route('stok.data') }}',
                 },
                 columns: [{
-                    data: 'DT_RowIndex',
-                }, {
-                    data: 'nameCabang',
-                }, {
-                    data: 'nameBahan',
-                }, {
-                    data: 'jumlah',
-                }, {
-                    data: 'aksi',
-                }],
+                        data: 'DT_RowIndex',
+                    }, {
+                        data: 'nameCabang',
+                    }, {
+                        data: 'nameBahan',
+                    }, {
+                        data: 'jumlah',
+                    }, {
+                        data: 'aksi',
+                    }
+
+                ],
             });
+            if ("{{ auth()->user()->role }}" === 'admin') {
+                table.column(4).visible(true); // Kolom 'aksi' memiliki indeks 4 (mulai dari 0)
+            } else {
+                table.column(4).visible(false);
+            }
         });
+
+
 
         function deleteData(url) {
             if (confirm('Yakin ingin menghapus data terpilih?')) {

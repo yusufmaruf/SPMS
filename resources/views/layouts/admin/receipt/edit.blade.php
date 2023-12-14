@@ -46,7 +46,7 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->bahanbaku->name }}</td>
                                     <td>
-                                        <input type="number" name="quantity" value="{{ $item->quantity }}">
+                                        <input type="number" name="quantity" value="{{ $item->Quantity }}">
                                     </td>
                                     <td>
                                         <div class="btn-group">

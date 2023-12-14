@@ -17,10 +17,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $primaryKey = 'idUser';
+
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'idCabang'
     ];
 
     /**

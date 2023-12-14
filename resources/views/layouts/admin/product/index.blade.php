@@ -24,8 +24,11 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Data Product</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    <a href="{{ route('product.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
-                        </span> Tambah Data</a>
+                    @if (auth()->user()->role == 'admin')
+                        <a href="{{ route('product.create') }}" class="btn btn-primary ml-auto"><span
+                                class="ti ti-plus me-1">
+                            </span> Tambah Data</a>
+                    @endif
                 </div>
                 <table class="table table-dt">
                     <thead>
@@ -35,7 +38,9 @@
                             <th>Description</th>
                             <th>Image</th>
                             <th>Price</th>
-                            <th width="10%">Action</th>
+                            @if (auth()->user()->role == 'admin')
+                                <th width="10%">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -79,6 +84,12 @@
                     data: 'aksi',
                 }],
             });
+
+            if ("{{ auth()->user()->role }}" === 'admin') {
+                table.column(5).visible(true); // Kolom 'aksi' memiliki indeks 5 (mulai dari 0)
+            } else {
+                table.column(5).visible(false);
+            }
         });
 
         function deleteData(url) {
