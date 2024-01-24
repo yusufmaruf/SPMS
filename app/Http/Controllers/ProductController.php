@@ -59,13 +59,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'description' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'required|numeric|min:1',
+        ]);
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
         $data['image'] = $request->file('image')->store('assets/category', 'public');
         Product::create($data);
         $message = 'Berhasil Menambahkan Produk';
-        return redirect()->route('product.index')->with('success', 'Berhasil Ditambahkan');
+        return redirect()->route('product.index')->with('success_message_create', 'Berhasil Ditambahkan');
     }
 
     /**
@@ -90,6 +95,12 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'description' => 'required|string',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'required|numeric|min:1',
+        ]);
         $data = $request->all();
 
         $item = Product::findOrFail($id);
@@ -106,7 +117,7 @@ class ProductController extends Controller
 
         $item->update($data);
 
-        return redirect()->route('product.index');
+        return redirect()->route('product.index')->with('success_message_update', 'Item Berhasil Diperbarui');
     }
 
     /**
@@ -115,8 +126,6 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $item = Product::where('idProduct', $id)->first();
-
-
         if ($item->image) {
             Storage::disk('public')->delete($item->image);
         }

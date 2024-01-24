@@ -184,6 +184,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        'Toastr' => Yoeunes\Toastr\Facades\Toastr::class,
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 

@@ -82,7 +82,7 @@
 
                         // Update the form action attribute
                         $('#bahanbakudelete').attr('action',
-                            '/bahanbaku/' + id);
+                            '/admin/bahanbaku/' + id);
                     }
                 });
 

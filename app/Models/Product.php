@@ -12,6 +12,8 @@ class Product extends Model
     protected $fillable = [
         'name', 'slug', 'image', 'price', 'description'
     ];
+
+
     // Product model
     public function cart()
     {

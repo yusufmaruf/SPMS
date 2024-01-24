@@ -13,7 +13,6 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Tambah Data Product</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    <a href="" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1"> </span> Tambah Data</a>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('product.store') }}" id="basic-form" method="post" novalidate
@@ -21,22 +20,22 @@
                         @csrf
                         <div class="mb-3">
                             <label for="">Produk</label>
-                            <input type="text" name="name" id="" class="form-control">
+                            <input required type="text" name="name" id="" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Desc</label>
-                            <textarea id="summernote" name="description" class="form-control"></textarea>
+                            <textarea required id="summernote" name="description" class="form-control"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="">Image</label>
-                            <input type="file" name="image" id="" class="form-control">
+                            <input required type="file" name="image" id="" class="form-control">
                         </div>
                         <div class="mb-3">
-                            <label for="">Price</label>
-                            <input type="number" name="price" id="" class="form-control">
+                            <label for="price">Price</label>
+                            <input type="number" name="price" id="price" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button required type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>

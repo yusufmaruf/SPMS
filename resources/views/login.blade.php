@@ -82,6 +82,15 @@
 
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
                         @csrf
+                        @if ($errors->any())
+                            <div class="alert alert-danger mt-3">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <div class="mb-3">
                             <label for="email" class="form-label">Email or Username</label>
                             <input type="text" class="form-control" id="email" name="email"
@@ -96,6 +105,9 @@
                                     aria-describedby="password" />
                             </div>
                         </div>
+                        <!-- Error Message Container -->
+
+                        <!-- End Error Message Container -->
                         <button type="submit" class="btn btn-primary d-grid w-100">Sign in</button>
                     </form>
 

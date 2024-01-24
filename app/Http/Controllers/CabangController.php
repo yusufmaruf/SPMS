@@ -60,6 +60,7 @@ class CabangController extends Controller
         $data['slug'] = Str::slug($request->name);
         $data['image'] = $request->file('image')->store('assets/cabang', 'public');
         Cabang::create($data);
+        toast('Your Post as been submited!', 'success');
         return redirect()->route('cabang.index')->with('success', 'Berhasil Ditambahkan');
     }
 

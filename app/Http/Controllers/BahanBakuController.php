@@ -50,7 +50,7 @@ class BahanBakuController extends Controller
         $data['slug'] = Str::slug($request->name);
         BahanBaku::create($data);
         $message = 'Berhasil Menambahkan Bahan Baku';
-        return redirect()->route('bahanbaku.index')->with('success', 'Berhasil Ditambahkan');
+        return redirect()->route('bahanbaku.index')->with('success_message_create', 'Item has been added successfully!');
     }
 
     /**
@@ -92,6 +92,6 @@ class BahanBakuController extends Controller
     {
         $bahanBaku = BahanBaku::findOrFail($id);
         $bahanBaku->delete();
-        return redirect()->route('bahanbaku.index')->with('success', 'Berhasil DiHapus');
+        return redirect()->route('bahanbaku.index')->with('success_message_delete', 'Berhasil DiHapus');
     }
 }
