@@ -45,6 +45,9 @@ class BahanBakuController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|max:255|string',
+        ]);
 
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
@@ -76,12 +79,16 @@ class BahanBakuController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $request->validate([
+            'name' => 'required|max:255|string',
+        ]);
         $bahanBaku = BahanBaku::findOrFail($id);
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
         $bahanBaku->update($data);
 
-        return redirect()->route('bahanbaku.index')->with('success', 'Berhasil DiUbah');
+        return redirect()->route('bahanbaku.index')->with('success_message_update', 'Berhasil DiUbah');
     }
 
 
