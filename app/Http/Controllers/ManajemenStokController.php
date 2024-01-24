@@ -8,6 +8,7 @@ use App\Models\ManajemenStok;
 use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Psy\Readline\Hoa\Console;
 
 class ManajemenStokController extends Controller
 {
@@ -16,51 +17,65 @@ class ManajemenStokController extends Controller
      */
     public function index()
     {
-        // // get last week data 
-        // $startWeek = Carbon::now()->subWeek()->startOfWeek(); 
-        // $endWeek   = Carbon::now()->subWeek()->endOfWeek();
-        // echo "Awal Minggu: $startWeek dan akhir Minggu: $endWeek";
-
-
-
-        // $weeklySales = DB::table('sale_details')
-        //     ->select(DB::raw('YEAR(created_at) AS tahun, MONTH(created_at) AS bulan, idProduk,
-        //              FLOOR((DAY(created_at) - 1) / 8) + 1 AS minggu_ke, 
-        //              SUM(quantity) AS total_penjualan'))
-        //     ->groupBy('idProduk', 'tahun', 'bulan', 'minggu_ke')
-        //     ->orderBy('idProduk', 'asc')
-        //     ->orderBy('tahun', 'asc')
-        //     ->orderBy('bulan', 'asc')
-        //     ->orderBy('minggu_ke', 'asc')
-        //     ->get();
-
-        $data = SaleDetail::selectRaw('products.name as name, SUM(sale_details.quantity) as max_quantity, AVG(sale_details.quantity) as AVG_quantity')
-            ->whereBetween('sale_details.created_at', ['2023-10-16 00:00:00', '2023-10-24 00:00:00'])
+        $tanggalPertamaMingguLalu = Carbon::now()->subWeek()->startOfWeek();
+        $tanggalTerakhirMingguLalu = Carbon::now()->subWeek()->endOfWeek();
+        $data = SaleDetail::selectRaw('idProduk, products.name as name, SUM(sale_details.quantity) as max_quantity')
+            ->whereBetween('sale_details.created_at', [$tanggalPertamaMingguLalu, $tanggalTerakhirMingguLalu])
             ->groupBy('idProduk')
             ->join('products', 'sale_details.idProduk', '=', 'products.idproduct')
             ->get();
-
+        $processedData = [];
         foreach ($data as $item) {
-            $safetystock = ($item->max_quantity - $item->AVG_quantity) * 1;
-            $maximumStock = 2 * ($item->AVG_quantity * 1) + $safetystock;
-            $minimum = ($item->AVG_quantity * 1) + $safetystock;
-            echo ("Savety Maximum Penjualan " . $item->name . " = " . $item->max_quantity . "<br>");
-            echo ("Savety rata-rata Penjualan " . $item->name . " = " . $item->AVG_quantity . "<br>");
-            echo ("Savety Stock ID_Produk " . $item->name . " = " . $safetystock . "<br>");
-            echo ("Minimum Stock ID_Produk " . $item->name . " = " . $minimum . "<br>");
-            echo ("Maximum Stock ID_Produk " . $item->name . " = " . $maximumStock . "<br><br>");
+            $AVG_quantity = $item->max_quantity / 7;
+            $safetystock = ($item->max_quantity - $AVG_quantity) * 1;
+            $maximumStock = 2 * ($AVG_quantity * 1) + $safetystock;
+            $minimumStock = ($AVG_quantity * 1) + $safetystock;
+            $processedData[] = (object)[
+                'name' => $item->name,
+                'max_quantity' => $item->max_quantity,
+                'AVG_quantity' => $AVG_quantity,
+                'safetystock' => $safetystock,
+                'minimumStock' => $minimumStock,
+                'maximumStock' => $maximumStock,
+            ];
+        }
+
+        $data2  = DB::table('sale_details as sd')
+            ->join('receipts as r', 'sd.idProduk', '=', 'r.idProduct')
+            ->join('bahan_bakus as bb', 'bb.idBahan', '=', 'r.idBahan')
+            ->join('sales as s', 's.idSales', '=', 'sd.idSales')
+            ->join('cabangs as c', 'c.idCabang', '=', 's.idCabang')
+            ->whereBetween('sd.created_at', [$tanggalPertamaMingguLalu, $tanggalTerakhirMingguLalu])
+            ->groupBy('bb.name', 'c.name')
+            ->select(
+                'bb.name',
+                'c.name as cabang',
+                DB::raw('SUM(sd.quantity * r.quantity) as total_quantity'),
+            )
+            ->get();
+
+
+        $processedData2 = [];
+        foreach ($data2 as $item) {
+            $AVG_quantity = $item->total_quantity / 7;
+            $safetystock = ($item->total_quantity - $AVG_quantity) * 1;
+            $maximumStock = 2 * ($AVG_quantity * 1) + $safetystock;
+            $minimumStock = ($AVG_quantity * 1) + $safetystock;
+            $processedData2[] = (object)[
+                'name' => $item->name,
+                'cabang' => $item->cabang,
+                'total_quantity' => $item->total_quantity,
+                'AVG_quantity' => $AVG_quantity,
+                'safetystock' => round($safetystock),
+                'minimumStock' => round($minimumStock),
+                'maximumStock' => round($maximumStock),
+            ];
         }
 
 
 
-
-
-
-
-        // // Tampilkan hasil
-        // foreach ($weeklySales as $sale) {
-        //     echo "IDProduk: {$sale->idProduk} Tahun: {$sale->tahun}, Bulan: {$sale->bulan}, Minggu ke: {$sale->minggu_ke}, Total Penjualan: {$sale->total_penjualan}<br>";
-        // }
+        // dd($processedData);
+        return view('layouts.admin.manajemenstok.index', ['processedData2' => $processedData2, 'processedData' => $processedData, 'tanggalAwal' => $tanggalPertamaMingguLalu, 'tanggalAkhir' => $tanggalTerakhirMingguLalu]);
     }
 
     /**

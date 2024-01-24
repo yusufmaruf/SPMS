@@ -18,22 +18,22 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
-        <li class="menu-item ">
-            <a href="/" class="menu-link">
+        <li class="menu-item  {{ request()->is('dashboard*') ? 'active' : '' }}">
+            <a href="/dashboard" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-smart-home"></i>
-                <div data-i18n="dashboard">Dashboard</div>
+                <div data-i18n="Dashboard"></div>
             </a>
         </li>
-
         @if (Auth::user()->role == 'admin')
-            <li class="menu-item open">
+            <li
+                class="menu-item {{ request()->is('admin/manajemenstok*') || request()->is('forecasting*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons ti ti-api-app"></i>
                     <div data-i18n="Sistem Cerdas"> Sistem Cerdas</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item ">
-                        <a href="" class="menu-link">
+                    <li class="menu-item {{ request()->is('admin/manajemenstok*') ? 'active' : '' }} ">
+                        <a href="{{ route('manajemenstok.index') }}" class="menu-link">
                             <div data-i18n="ManajemenStok">Manajemen Stok</div>
                         </a>
                     </li>
@@ -46,8 +46,6 @@
             </li>
         @endif
 
-
-
         <!-- Apps & Pages -->
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Master Data</span>
@@ -59,7 +57,7 @@
             </a>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item  {{ request()->is('stok*') ? 'active' : '' }}">
             <a href="{{ route('stok.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-fridge"></i>
                 <div data-i18n="Stok Bahan Baku">Stok Bahan Baku</div>
@@ -73,12 +71,6 @@
                     <div data-i18n="Bahan Baku">Bahan Baku</div>
                 </a>
             </li>
-            <li class="menu-item {{ request()->is('resep*') ? 'active' : '' }}">
-                <a href="{{ route('resep.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons ti ti-flask"></i>
-                    <div data-i18n="Resep">Resep</div>
-                </a>
-            </li>
             <li class="menu-item {{ request()->is('cabang*') ? 'active' : '' }}">
                 <a href="{{ route('cabang.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons ti ti-map-pin"></i>
@@ -86,6 +78,12 @@
                 </a>
             </li>
         @endif
+        <li class="menu-item {{ request()->is('resep*') ? 'active' : '' }}">
+            <a href="{{ route('resep.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-flask"></i>
+                <div data-i18n="Resep">Resep</div>
+            </a>
+        </li>
 
 
 
@@ -93,40 +91,40 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Transaksi</span>
         </li>
-        <li class="menu-item">
+        <li class="menu-item {{ request()->is('penjualan*') ? 'active' : '' }}">
             <a href="{{ route('penjualan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                 <div data-i18n="Penjualan">Penjualan Cabang</div>
             </a>
         </li>
-        <li class="menu-item">
+        {{-- <li class="menu-item">
             <a href="{{ route('penjualan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-download"></i>
                 <div data-i18n="Pembelian">Pembelian</div>
             </a>
-        </li>
-        <li class="menu-item">
+        </li> --}}
+        {{-- <li class="menu-item">
             <a href="app-kanban.html" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-truck"></i>
                 <div data-i18n="Pasok Bahan Baku">Pasok Bahan Baku</div>
             </a>
-        </li>
+        </li> --}}
 
 
         <!-- Forms & Tables -->
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Laporan Penjualan</span>
         </li>
-        <li class="menu-item">
+        {{-- <li class="menu-item">
             <a href="tables-basic.html" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-report-money"></i>
                 <div data-i18n="Laporan Pengeluran">Laporan Pengeluran</div>
             </a>
-        </li>
-        <li class="menu-item">
-            <a href="tables-basic.html" class="menu-link">
+        </li> --}}
+        <li class="menu-item {{ request()->is('laporanpenjualan*') ? 'active' : '' }}">
+            <a href="{{ route('laporanpenjualan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-report-analytics"></i>
-                <div data-i18n="Laporan Pemansukan">Laporan Pemasukan</div>
+                <div data-i18n="Laporan Pemasukan">Laporan Pemasukan</div>
             </a>
         </li>
     </ul>

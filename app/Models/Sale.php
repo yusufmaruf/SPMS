@@ -10,6 +10,16 @@ class Sale extends Model
     use HasFactory;
     protected $primaryKey = 'idSale';
     protected $fillable = [
-        'idUser',    'idCabang', 'quantity', 'subtotal', 'payment'
+        'idUser',    'idCabang',  'subtotal', 'payment'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'idUser', 'idUser');
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class, 'idCabang', 'idCabang');
+    }
 }

@@ -11,6 +11,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\ManajemenStokController;
+use App\Http\Controllers\DahboardController;
+use App\Http\Controllers\ReportSalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,31 +25,34 @@ use App\Http\Controllers\ManajemenStokController;
 |
 */
 
-Route::get('/loginuy', function () {
-    return view('login');
-});
-route::get('/dashboard', function () {
-    return view('layouts.admin.dashboard.index');
-});
+
 route::get('/', function () {
     return view('login');
 });
 
 Auth::routes();
 
-route::get('/product/data', [ProductController::class, 'data'])->name('product.data');
-route::get('/cabang/data', [CabangController::class, 'data'])->name('cabang.data');
-route::get('/bahan/data', [BahanBakuController::class, 'data'])->name('bahan.data');
-route::get('/stok/data', [StokController::class, 'data'])->name('stok.data');
-route::get('/resep/data', [ReceiptController::class, 'data'])->name('resep.data');
-route::get('/cart/data', [SaleController::class, 'data'])->name('cart.data');
-route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
+route::middleware('auth')->group(function () {
+    route::get('/dashboard', [DahboardController::class, 'index']);
+    route::get('/product/data', [ProductController::class, 'data'])->name('product.data');
+    route::get('/stok/data', [StokController::class, 'data'])->name('stok.data');
+    route::get('/resep/data', [ReceiptController::class, 'data'])->name('resep.data');
+    route::get('/cart/data', [SaleController::class, 'data'])->name('cart.data');
+    route::get('/laporanpenjualan/data', [ReportSalesController::class, 'data'])->name('laporanpenjualan.data');
+    route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
 
-route::resource('stok', StokController::class);
-route::resource('cabang', CabangController::class);
-route::resource('product', ProductController::class);
-route::resource('bahanbaku', BahanBakuController::class);
-route::resource('resep', ReceiptController::class);
-route::resource('penjualan', SaleController::class);
-route::resource('cart', CartController::class);
-route::resource('manajemenstok', ManajemenStokController::class);
+    route::resource('stok', StokController::class);
+    route::resource('product', ProductController::class);
+    route::resource('resep', ReceiptController::class);
+    route::resource('penjualan', SaleController::class);
+    route::resource('cart', CartController::class);
+    route::resource('laporanpenjualan', ReportSalesController::class);
+
+    route::prefix('admin')->middleware('admin')->group(function () {
+        route::get('/bahan/data', [BahanBakuController::class, 'data'])->name('bahan.data');
+        route::get('/cabang/data', [CabangController::class, 'data'])->name('cabang.data');
+        route::resource('cabang', CabangController::class);
+        route::resource('bahanbaku', BahanBakuController::class);
+        route::resource('manajemenstok', ManajemenStokController::class);
+    });
+});

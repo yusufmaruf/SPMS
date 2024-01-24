@@ -16,7 +16,7 @@ class ReceiptController extends Controller
      */
     public function index()
     {
-        $receipt = Receipt::select('idProduct', DB::raw('MAX(idReceipt) as max_idReceipt'))
+        $receipt = Receipt::select('idProduct')
             ->groupBy('idProduct')
             ->with('product', 'bahanbaku')
             ->get();

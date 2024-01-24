@@ -99,8 +99,9 @@ class SaleController extends Controller
                                 ->first();
 
                             if ($stokItem) {
+                                $pengurangan = $receiptItem->Quantity * $item->quantity;
                                 // Gunakan decrement hanya jika $stokItem ditemukan
-                                $stokItem->decrement('jumlah', $receiptItem->Quantity);
+                                $stokItem->decrement('jumlah', $pengurangan);
                             } else {
                                 // Handle jika $stokItem tidak ditemukan
                                 // (Anda dapat menentukan tindakan yang sesuai, misalnya, log pesan atau memberi tahu pengguna)

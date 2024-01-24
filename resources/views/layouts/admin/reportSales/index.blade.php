@@ -17,58 +17,26 @@
 @endpush
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">resep /</span> Data Resep</h4>
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Report /</span> Report Sales</h4>
         <!-- DataTable with Buttons -->
         <div class="card">
             <div class="card-datatable table-responsive pt-0">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Data Resep</h5>
-                    <!-- Move the button to the right using ml-auto -->
-                    @if (Auth::user()->role == 'admin')
-                        <a href="{{ route('resep.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
-                            </span> Tambah Receipt</a>
-                    @endif
+                    <h5 class="card-title mb-0">Data Sales</h5>
                 </div>
                 <table class="table table-dt">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama</th>
-                            <th width="10%">aksi</th>
-
+                            <th>Tanggal Transaksi</th>
+                            <th>Cabang</th>
+                            <th>Kasir</th>
+                            <th>Subtotal</th>
+                            <th>Payment</th>
+                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                            $no = 1;
-                        @endphp
-                        @foreach ($receipt as $item)
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>{{ $item->product->name }}</td>
-                                @if (Auth::user()->role == 'admin')
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="{{ route('resep.show', $item->idProduct) }}"
-                                                class="btn btn-success">Lihat</a>
-                                            <a href="{{ route('resep.edit', ['resep' => $item->idProduct]) }}"
-                                                class="btn btn-warning">Edit</a>
-                                            <a href="#"
-                                                onclick="deleteData('{{ route('resep.destroy', $item->idProduct) }}')"
-                                                class="btn btn-danger">Hapus</a>
-                                        </div>
-                                    </td>
-                                @else
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="{{ route('resep.show', $item->idProduct) }}"
-                                                class="btn btn-success">Lihat</a>
-                                        </div>
-                                    </td>
-                                @endif
-
-                            </tr>
-                        @endforeach
 
                     </tbody>
                 </table>
@@ -85,7 +53,45 @@
         let table; // Declare table as a global variable
 
         $(document).ready(function() {
-            table = $('.table').DataTable();
+            table = $('.table').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                autoWidth: false,
+                ajax: {
+                    url: '{{ route('laporanpenjualan.data') }}',
+                },
+                columns: [{
+                    data: 'DT_RowIndex',
+                }, {
+                    data: 'created_at',
+                    render: function(data, type, full, meta) {
+                        // Format tanggal
+                        if (type === 'display') {
+                            var date = new Date(data);
+                            return date.toLocaleDateString('id-ID');
+                        }
+                        return data;
+                    }
+
+                }, {
+                    data: 'cabang.name',
+                }, {
+                    data: 'user.name'
+                }, {
+                    data: 'subtotal'
+                }, {
+                    data: 'payment'
+                }, {
+                    data: 'aksi',
+                }],
+            });
+
+            if ("{{ auth()->user()->role }}" === 'admin') {
+                table.column(5).visible(true); // Kolom 'aksi' memiliki indeks 5 (mulai dari 0)
+            } else {
+                table.column(5).visible(false);
+            }
         });
 
         function deleteData(url) {

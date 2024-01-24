@@ -1,0 +1,25 @@
+        // // get last week data 
+        // $startWeek = Carbon::now()->subWeek()->startOfWeek(); 
+        // $endWeek   = Carbon::now()->subWeek()->endOfWeek();
+        // echo "Awal Minggu: $startWeek dan akhir Minggu: $endWeek";
+
+
+
+        // $weeklySales = DB::table('sale_details')
+        //     ->select(DB::raw('YEAR(created_at) AS tahun, MONTH(created_at) AS bulan, idProduk,
+        //              FLOOR((DAY(created_at) - 1) / 8) + 1 AS minggu_ke, 
+        //              SUM(quantity) AS total_penjualan'))
+        //     ->groupBy('idProduk', 'tahun', 'bulan', 'minggu_ke')
+        //     ->orderBy('idProduk', 'asc')
+        //     ->orderBy('tahun', 'asc')
+        //     ->orderBy('bulan', 'asc')
+        //     ->orderBy('minggu_ke', 'asc')
+        //     ->get();
+
+
+
+
+        // // Tampilkan hasil
+        // foreach ($weeklySales as $sale) {
+        //     echo "IDProduk: {$sale->idProduk} Tahun: {$sale->tahun}, Bulan: {$sale->bulan}, Minggu ke: {$sale->minggu_ke}, Total Penjualan: {$sale->total_penjualan}<br>";
+        // }

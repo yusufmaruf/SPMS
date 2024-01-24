@@ -22,7 +22,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Data Stok Bahan Baku</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    @if (auth()->user()->level == 'admin')
+                    @if (auth()->user()->role == 'admin')
                         <a href="{{ route('stok.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
                             </span> Tambah Data</a>
                     @endif
@@ -42,7 +42,7 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>Tortila</td>\
+                            <td>Tortila</td>
                         </tr>
                     </tbody>
                 </table>

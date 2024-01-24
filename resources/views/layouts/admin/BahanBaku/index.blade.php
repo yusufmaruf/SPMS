@@ -47,7 +47,6 @@
     <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script>
         $(document).ready(function() {
-
             $('body').on('click', '.tombol-edit', function(e) {
                 var id = $(this).data('id');
                 $.ajax({

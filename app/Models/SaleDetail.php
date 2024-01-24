@@ -12,4 +12,13 @@ class SaleDetail extends Model
     protected $fillable = [
         'idSales', 'idProduk', 'quantity', 'total'
     ];
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'idSales', 'idSales'); // Sesuaikan dengan nama kolom yang sesuai
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'idProduk', 'idProduct');
+    }
 }
