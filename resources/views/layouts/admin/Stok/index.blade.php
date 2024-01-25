@@ -49,11 +49,11 @@
             </div>
         </div>
     </div>
+    @includeIf('layouts.admin.Stok.deleteModal')
 @endsection
 
 @push('script')
     <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-
     <script>
         let table; // Declare table as a global variable
         $(document).ready(function() {
@@ -66,18 +66,16 @@
                     url: '{{ route('stok.data') }}',
                 },
                 columns: [{
-                        data: 'DT_RowIndex',
-                    }, {
-                        data: 'nameCabang',
-                    }, {
-                        data: 'nameBahan',
-                    }, {
-                        data: 'jumlah',
-                    }, {
-                        data: 'aksi',
-                    }
-
-                ],
+                    data: 'DT_RowIndex',
+                }, {
+                    data: 'nameCabang',
+                }, {
+                    data: 'nameBahan',
+                }, {
+                    data: 'jumlah',
+                }, {
+                    data: 'aksi',
+                }],
             });
             if ("{{ auth()->user()->role }}" === 'admin') {
                 table.column(4).visible(true); // Kolom 'aksi' memiliki indeks 4 (mulai dari 0)
@@ -85,29 +83,30 @@
                 table.column(4).visible(false);
             }
         });
+    </script>
 
-
-
-        function deleteData(url) {
-            if (confirm('Yakin ingin menghapus data terpilih?')) {
-                // Get the CSRF token from the meta tag.
-                const csrfToken = $('[name=csrf-token]').attr('content');
-
+    <script>
+        $(document).ready(function() {
+            $('body').on('click', '.tombol-del', function(e) {
+                var id = $(this).data('id');
+                console.log(id);
                 $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        '_token': csrfToken,
-                        '_method': 'delete'
-                    },
+                    url: '{{ route('stok.show', ['stok' => ':id']) }}'.replace(':id',
+                        id),
+                    type: 'GET',
                     success: function(response) {
-                        table.ajax.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Tidak dapat menghapus data');
+                        $('#deletedata').modal('show');
+                        $('#stokdelete').attr('action',
+                            '/stok/' + id);
                     }
                 });
+            });
+        });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        }
+
+        });
     </script>
 @endpush

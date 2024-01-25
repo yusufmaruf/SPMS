@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class StokController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $stoks = Stok::with('bahan', 'cabang')->get();
@@ -31,12 +28,7 @@ class StokController extends Controller
             ->of($stoks)
             ->addIndexColumn()
             ->addColumn('aksi', function ($stoks) {
-                return '
-                <div class="btn-group">
-                    <a class="btn  btn-warning btn-flat" href="' . route('stok.edit', $stoks->idStok) . '">Sunting</a>
-                    <button onclick="deleteData(`' . route('stok.destroy', $stoks->idStok) . '`)" class="btn  btn-danger btn-flat">Hapus</button>               
-                </div>
-                ';
+                return view('layouts.admin.Stok.tombol', ['data' => $stoks]);
             })
             ->addColumn('nameBahan', function ($stoks) {
                 return $stoks->bahan->name;
@@ -63,6 +55,11 @@ class StokController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'idBahan' => 'required|exists:bahan_bakus,idBahan',
+            'idCabang' => 'required|exists:cabangs,idCabang',
+            'jumlah' => 'required|numeric|min:1',
+        ]);
         $stock = Stok::where('idBahan', $request->idBahan)->where('idCabang', $request->idCabang)->first();
         if ($stock) {
             $stock->update([
@@ -75,7 +72,7 @@ class StokController extends Controller
                 'jumlah' => $request->jumlah
             ]);
         }
-        return redirect()->route('stok.index')->with('success', 'Berhasil Ditambahkan');
+        return redirect()->route('stok.index')->with('success_message_create', 'Berhasil Ditambahkan');
     }
 
 
@@ -84,7 +81,8 @@ class StokController extends Controller
      */
     public function show(Stok $stok)
     {
-        //
+        $data = Stok::where('idStok', $stok->idStok)->first();
+        return response()->json(['result' => $data], 200);
     }
 
     /**
@@ -92,10 +90,14 @@ class StokController extends Controller
      */
     public function edit($id)
     {
-        $data = Stok::where('idStok', $id)->first();
-        $bahan = BahanBaku::all();
-        $cabang = Cabang::all();
-        return view('layouts.admin.stok.edit', compact('data', 'bahan', 'cabang'));
+        try {
+            $data = Stok::where('idStok', $id)->first();
+            $bahan = BahanBaku::all();
+            $cabang = Cabang::all();
+            return view('layouts.admin.stok.edit', compact('data', 'bahan', 'cabang'))->with('success_message_update', 'Berhasil diperbarui');
+        } catch (\Throwable $th) {
+            return redirect()->route('stok.index')->with('error_message_update', 'Item Tidak Ditemukan');
+        }
     }
 
     /**
@@ -103,9 +105,18 @@ class StokController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $stock = Stok::where('idStok', $id)->first();
-        $stock->update($request->all());
-        return redirect()->route('stok.index')->with('success', 'Berhasil Diubah');
+        $request->validate([
+            'idBahan' => 'required|exists:bahan_bakus,idBahan',
+            'idCabang' => 'required|exists:cabangs,idCabang',
+            'jumlah' => 'required|numeric|min:1',
+        ]);
+        try {
+            $stock = Stok::where('idStok', $id)->first();
+            $stock->update($request->all());
+            return redirect()->route('stok.index')->with('success_message_update', 'Berhasil Diubah');
+        } catch (\Throwable $th) {
+            return redirect()->route('stok.index')->with('error_message_update', 'Item Tidak Dapat Diubah');
+        }
     }
 
 
@@ -114,8 +125,12 @@ class StokController extends Controller
      */
     public function destroy($id)
     {
-        $stock = Stok::where('idStok', $id)->first();
-        $stock->delete();
-        return redirect()->route('stok.index')->with('success', 'Berhasil Dihapus');
+        try {
+            $item = Stok::where('idStok', $id)->first();
+            $item->delete();
+            return redirect()->route('stok.index')->with('success_message_delete', 'Berhasil Dihapus');
+        } catch (\Throwable $th) {
+            return redirect()->route('stok.index')->with('error_message_delete', 'Item Tidak Dapat Dihapus');
+        }
     }
 }
