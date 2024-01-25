@@ -19,4 +19,8 @@ class Product extends Model
     {
         return $this->belongsTo(Cart::class, 'idProduct', 'idProduct');
     }
+    public function receipt()
+    {
+        return $this->hasMany(Receipt::class, 'idProduct', 'idProduct');
+    }
 }
