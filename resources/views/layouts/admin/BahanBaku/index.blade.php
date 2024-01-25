@@ -77,7 +77,13 @@
                     success: function(response) {
                         $('#deletedata').modal('show');
                         // $('#idBahan').val(response.result.idBahan);
-                        var nameParagraph = $('<p>').text('Nama: ' + response.result.name);
+                        $('.namaBahan').empty();
+
+                        // Create a new paragraph element with the updated class
+                        var nameParagraph = $('<p>').addClass('namaBahan').text('Nama: ' +
+                            response.result.name);
+
+                        // Append the new paragraph to the existing content-data div
                         $('.content-data').append(nameParagraph);
 
                         // Update the form action attribute

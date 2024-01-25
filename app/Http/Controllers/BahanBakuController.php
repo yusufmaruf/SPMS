@@ -97,8 +97,15 @@ class BahanBakuController extends Controller
      */
     public function destroy($id)
     {
-        $bahanBaku = BahanBaku::findOrFail($id);
-        $bahanBaku->delete();
-        return redirect()->route('bahanbaku.index')->with('success_message_delete', 'Berhasil DiHapus');
+        try {
+            $bahanBaku = BahanBaku::findOrFail($id);
+            if ($bahanBaku->receipt()->count() > 0) {
+                return redirect()->route('bahanbaku.index')->with('error_message_delete', 'Gagal Menghapus Data Dikarenakan data terhubung dengan data lain');
+            }
+            $bahanBaku->delete();
+            return redirect()->route('bahanbaku.index')->with('success_message_delete', 'Berhasil DiHapus');
+        } catch (\Throwable $th) {
+            return redirect()->route('bahanbaku.index')->with('error_message_delete', 'Gagal Menghapus Data ');
+        }
     }
 }
