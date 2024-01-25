@@ -2,18 +2,17 @@
 @push('style')
     @section('content')
         <div class="container-xxl flex-grow-1 container-p-y">
-            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Admin /</span> Tambah Product</h4>
+            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Admin /</span> Edit Cabang</h4>
             <!-- DataTable with Buttons -->
             <div class="card">
                 <div class="card-datatable table-responsive pt-0">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Tambah Data Product</h5>
+                        <h5 class="card-title mb-0">Edit Cabang</h5>
                         <!-- Move the button to the right using ml-auto -->
-                        <a href="" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1"> </span> Tambah Data</a>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('cabang.update', ['cabang' => $item->idCabang]) }}" id="basic-form"
-                            method="post" novalidate enctype="multipart/form-data">
+                        <form action="{{ route('cabang.update', ['cabang' => $item->idCabang]) }}" id="basic-form" method="post"
+                            novalidate enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="mb-3">

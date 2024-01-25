@@ -76,7 +76,7 @@
                     type: 'GET',
                     success: function(response) {
                         $('#deletedata').modal('show');
-                        $('#idBahan').val(response.result.idBahan);
+                        // $('#idBahan').val(response.result.idBahan);
                         var nameParagraph = $('<p>').text('Nama: ' + response.result.name);
                         $('.content-data').append(nameParagraph);
 
@@ -123,27 +123,5 @@
                 }],
             });
         });
-
-        function deleteData(url) {
-            if (confirm('Yakin ingin menghapus data terpilih?')) {
-                // Get the CSRF token from the meta tag.
-                const csrfToken = $('[name=csrf-token]').attr('content');
-
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        '_token': csrfToken,
-                        '_method': 'delete'
-                    },
-                    success: function(response) {
-                        table.ajax.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Tidak dapat menghapus data');
-                    }
-                });
-            }
-        }
     </script>
 @endpush

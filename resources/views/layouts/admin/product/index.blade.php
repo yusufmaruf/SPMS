@@ -50,6 +50,7 @@
             </div>
         </div>
     </div>
+    @includeIf('components.modal')
 @endsection
 
 @push('script')

@@ -26,15 +26,7 @@ class CabangController extends Controller
             ->of($cabang)
             ->addIndexColumn()
             ->addColumn('aksi', function ($cabang) {
-                return '
-                <div class="btn-group">
-               <a class="btn  btn-warning btn-flat" href="' . route('cabang.edit', $cabang->idCabang) . '">
-                                        Sunting
-                                    </a>
-                    <button onclick="deleteData(`'  . route('cabang.destroy', ['cabang' => $cabang->idCabang]) . '`)" class="btn  btn-danger btn-flat">Hapus</button>
-                   
-                </div>
-                ';
+                return view('layouts.admin.cabang.tombol', ['data' => $cabang]);
             })
             ->addColumn('image', function ($product) {
                 return '<image src="' . Storage::url($product->image) . '" width="50px" class="img-circle elevation-2" alt="User Image">';
@@ -56,12 +48,21 @@ class CabangController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'location' => 'required|max:255|string',
+            'phone' => 'required|max:255|string',
+            'open' => 'required|max:255|string',
+            'close' => 'required|max:255|string',
+        ]);
+
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
         $data['image'] = $request->file('image')->store('assets/cabang', 'public');
         Cabang::create($data);
-        toast('Your Post as been submited!', 'success');
-        return redirect()->route('cabang.index')->with('success', 'Berhasil Ditambahkan');
+        return redirect()->route('cabang.index')->with('success_message_create', 'Berhasil Ditambahkan');
     }
 
     /**
@@ -69,7 +70,8 @@ class CabangController extends Controller
      */
     public function show(Cabang $cabang)
     {
-        //
+        $data = Cabang::where('idCabang', $cabang->idCabang)->first();
+        return response()->json(['result' => $data], 200);
     }
 
     /**
@@ -86,6 +88,15 @@ class CabangController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'location' => 'required|max:255|string',
+            'phone' => 'required|max:255|string',
+            'open' => 'required|max:255|string',
+            'close' => 'required|max:255|string',
+        ]);
         $data = $request->all();
 
         $item = Cabang::findOrFail($id);
@@ -102,7 +113,7 @@ class CabangController extends Controller
 
         $item->update($data);
 
-        return redirect()->route('cabang.index');
+        return redirect()->route('cabang.index')->with('success_message_update', 'Data Berhasil Diubah');
     }
 
     /**
@@ -110,13 +121,18 @@ class CabangController extends Controller
      */
     public function destroy(string $id)
     {
-        $item = Cabang::where('idCabang', $id)->first();
-
-
-        if ($item->image) {
-            Storage::disk('public')->delete($item->image);
+        try {
+            $item = Cabang::where('idCabang', $id)->first();
+            if ($item->stok()->count() > 0) {
+                return redirect()->route('cabang.index')->with('error_message_delete', 'Gagal Menghapus Data Dikarenakan data terhubung dengan data lain');
+            }
+            if ($item->image) {
+                Storage::disk('public')->delete($item->image);
+            }
+            $item->delete();
+            return redirect()->route('cabang.index')->with('success_message_delete', 'Berhasil Dihapus');
+        } catch (\Throwable $th) {
+            return redirect()->route('cabang.index')->with('error_message_delete', 'Gagal Menghapus Data');
         }
-        $item->delete();
-        return redirect()->route('cabang.index')->with('success', 'Berhasil Dihapus');
     }
 }

@@ -69,7 +69,6 @@ class ProductController extends Controller
         $data['slug'] = Str::slug($request->name);
         $data['image'] = $request->file('image')->store('assets/category', 'public');
         Product::create($data);
-        $message = 'Berhasil Menambahkan Produk';
         return redirect()->route('product.index')->with('success_message_create', 'Berhasil Ditambahkan');
     }
 
