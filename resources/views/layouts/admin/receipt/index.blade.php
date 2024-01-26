@@ -25,7 +25,8 @@
                     <h5 class="card-title mb-0">Data Resep</h5>
                     <!-- Move the button to the right using ml-auto -->
                     @if (Auth::user()->role == 'admin')
-                        <a href="{{ route('resep.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
+                        <a href="{{ route('plantReceipt.create') }}" class="btn btn-primary ml-auto"><span
+                                class="ti ti-plus me-1">
                             </span> Tambah Receipt</a>
                     @endif
                 </div>

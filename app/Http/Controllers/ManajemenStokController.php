@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\SaleDetail;
 use Illuminate\Http\Request;
 use App\Models\ManajemenStok;
-use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Psy\Readline\Hoa\Console;
 
 class ManajemenStokController extends Controller
 {
