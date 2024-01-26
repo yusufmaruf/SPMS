@@ -76,13 +76,19 @@
                     type: 'GET',
                     success: function(response) {
                         $('#deletedata').modal('show');
-                        $('#idBahan').val(response.result.idBahan);
-                        var nameParagraph = $('<p>').text('Nama: ' + response.result.name);
+                        // $('#idBahan').val(response.result.idBahan);
+                        $('.namaBahan').empty();
+
+                        // Create a new paragraph element with the updated class
+                        var nameParagraph = $('<p>').addClass('namaBahan').text('Nama: ' +
+                            response.result.name);
+
+                        // Append the new paragraph to the existing content-data div
                         $('.content-data').append(nameParagraph);
 
                         // Update the form action attribute
                         $('#bahanbakudelete').attr('action',
-                            '/bahanbaku/' + id);
+                            '/admin/bahanbaku/' + id);
                     }
                 });
 
@@ -123,27 +129,5 @@
                 }],
             });
         });
-
-        function deleteData(url) {
-            if (confirm('Yakin ingin menghapus data terpilih?')) {
-                // Get the CSRF token from the meta tag.
-                const csrfToken = $('[name=csrf-token]').attr('content');
-
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        '_token': csrfToken,
-                        '_method': 'delete'
-                    },
-                    success: function(response) {
-                        table.ajax.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Tidak dapat menghapus data');
-                    }
-                });
-            }
-        }
     </script>
 @endpush

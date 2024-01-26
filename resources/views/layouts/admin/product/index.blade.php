@@ -50,6 +50,7 @@
             </div>
         </div>
     </div>
+    @includeIf('layouts.admin.product.deleteModal')
 @endsection
 
 @push('script')
@@ -91,27 +92,45 @@
                 table.column(5).visible(false);
             }
         });
-
-        function deleteData(url) {
-            if (confirm('Yakin ingin menghapus data terpilih?')) {
-                // Get the CSRF token from the meta tag.
-                const csrfToken = $('[name=csrf-token]').attr('content');
-
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('body').on('click', '.tombol-del', function(e) {
+                var id = $(this).data('id');
+                console.log(id);
                 $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        '_token': csrfToken,
-                        '_method': 'delete'
-                    },
+                    url: '{{ route('product.show', ['product' => ':id']) }}'.replace(':id',
+                        id),
+                    type: 'GET',
                     success: function(response) {
-                        table.ajax.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Tidak dapat menghapus data');
+                        $('#deletedata').modal('show');
+                        // $('#idBahan').val(response.result.idBahan);
+                        // Remove the existing content of namaCabang
+                        $('.namaProduct').empty();
+
+                        // Create a new paragraph element with the updated class
+                        var nameParagraph = $('<p>').addClass('namaProduct').text('Nama: ' +
+                            response.result.name);
+
+                        // Append the new paragraph to the existing content-data div
+                        $('.content-data').append(nameParagraph);
+
+                        // Update the form action attribute
+                        $('#productdelete').attr('action',
+                            '/product/' + id);
                     }
                 });
+
+            });
+
+
+        });
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        }
+
+        });
     </script>
 @endpush

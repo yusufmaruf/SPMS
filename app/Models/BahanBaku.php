@@ -12,4 +12,9 @@ class BahanBaku extends Model
     protected $fillable = [
         'name', 'slug'
     ];
+
+    public function receipt()
+    {
+        return $this->hasMany(Receipt::class, 'idBahan', 'idBahan');
+    }
 }

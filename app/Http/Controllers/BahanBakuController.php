@@ -45,12 +45,15 @@ class BahanBakuController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|max:255|string',
+        ]);
 
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
         BahanBaku::create($data);
         $message = 'Berhasil Menambahkan Bahan Baku';
-        return redirect()->route('bahanbaku.index')->with('success', 'Berhasil Ditambahkan');
+        return redirect()->route('bahanbaku.index')->with('success_message_create', 'Item has been added successfully!');
     }
 
     /**
@@ -76,12 +79,16 @@ class BahanBakuController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $request->validate([
+            'name' => 'required|max:255|string',
+        ]);
         $bahanBaku = BahanBaku::findOrFail($id);
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
         $bahanBaku->update($data);
 
-        return redirect()->route('bahanbaku.index')->with('success', 'Berhasil DiUbah');
+        return redirect()->route('bahanbaku.index')->with('success_message_update', 'Berhasil DiUbah');
     }
 
 
@@ -90,8 +97,15 @@ class BahanBakuController extends Controller
      */
     public function destroy($id)
     {
-        $bahanBaku = BahanBaku::findOrFail($id);
-        $bahanBaku->delete();
-        return redirect()->route('bahanbaku.index')->with('success', 'Berhasil DiHapus');
+        try {
+            $bahanBaku = BahanBaku::findOrFail($id);
+            if ($bahanBaku->receipt()->count() > 0) {
+                return redirect()->route('bahanbaku.index')->with('error_message_delete', 'Gagal Menghapus Data Dikarenakan data terhubung dengan data lain');
+            }
+            $bahanBaku->delete();
+            return redirect()->route('bahanbaku.index')->with('success_message_delete', 'Berhasil DiHapus');
+        } catch (\Throwable $th) {
+            return redirect()->route('bahanbaku.index')->with('error_message_delete', 'Gagal Menghapus Data ');
+        }
     }
 }

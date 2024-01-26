@@ -12,4 +12,9 @@ class Cabang extends Model
     protected $fillable = [
         'name', 'slug', 'image', 'location', 'phone', 'open', 'close'
     ];
+
+    public function stok()
+    {
+        return $this->hasMany(Stok::class, 'idCabang', 'idCabang');
+    }
 }

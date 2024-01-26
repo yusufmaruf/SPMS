@@ -26,15 +26,7 @@ class ProductController extends Controller
             ->of($product)
             ->addIndexColumn()
             ->addColumn('aksi', function ($product) {
-                return '
-                <div class="btn-group">
-               <a class="btn  btn-warning btn-flat" href="' . route('product.edit', $product->idProduct) . '">
-                                        Sunting
-                                    </a>
-                    <button onclick="deleteData(`'  . route('product.destroy', ['product' => $product->idProduct]) . '`)" class="btn  btn-danger btn-flat">Hapus</button>
-                   
-                </div>
-                ';
+                return view('layouts.admin.product.tombol', ['data' => $product]);
             })
             ->addColumn('image', function ($product) {
                 return '<image src="' . Storage::url($product->image) . '" width="50px" class="img-circle elevation-2" alt="User Image">';
@@ -59,13 +51,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'description' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'required|numeric|min:1',
+        ]);
         $data = $request->all();
         $data['slug'] = Str::slug($request->name);
         $data['image'] = $request->file('image')->store('assets/category', 'public');
         Product::create($data);
-        $message = 'Berhasil Menambahkan Produk';
-        return redirect()->route('product.index')->with('success', 'Berhasil Ditambahkan');
+        return redirect()->route('product.index')->with('success_message_create', 'Berhasil Ditambahkan');
     }
 
     /**
@@ -73,7 +69,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        $data = Product::where('idProduct', $product->idProduct)->first();
+        return response()->json(['result' => $data], 200);
     }
 
     /**
@@ -90,6 +87,12 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'description' => 'required|string',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'required|numeric|min:1',
+        ]);
         $data = $request->all();
 
         $item = Product::findOrFail($id);
@@ -106,7 +109,7 @@ class ProductController extends Controller
 
         $item->update($data);
 
-        return redirect()->route('product.index');
+        return redirect()->route('product.index')->with('success_message_update', 'Item Berhasil Diperbarui');
     }
 
     /**
@@ -114,13 +117,20 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        $item = Product::where('idProduct', $id)->first();
+        try {
+            $item = Product::where('idProduct', $id)->first();
+            if ($item->receipt()->count() > 0) {
 
+                return redirect()->route('product.index')->with('error_message_delete', 'Item Tidak Dapat Dihapus');
+            }
+            if ($item->image) {
 
-        if ($item->image) {
-            Storage::disk('public')->delete($item->image);
+                Storage::disk('public')->delete($item->image);
+            }
+            $item->delete();
+            return redirect()->route('product.index')->with('success_message_delete', 'Berhasil Dihapus');
+        } catch (\Throwable $th) {
+            return redirect()->route('product.index')->with('error_message_delete', 'Item Tidak Dapat Dihapus');
         }
-        $item->delete();
-        return redirect()->route('product.index')->with('success', 'Berhasil Dihapus');
     }
 }

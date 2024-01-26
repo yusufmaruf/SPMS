@@ -9,35 +9,34 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Tambah Data Product</h5>
                         <!-- Move the button to the right using ml-auto -->
-                        <a href="" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1"> </span> Tambah Data</a>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('cabang.store') }}" id="basic-form" method="post" novalidate
                             enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
-                                <label for="">Nama Cabang</label>
-                                <input type="text" name="name" id="" class="form-control">
+                                <label for="name">Nama Cabang</label>
+                                <input type="text" name="name" id="name" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="">Image</label>
-                                <input type="file" name="image" id="" class="form-control">
+                                <label for="image">Image</label>
+                                <input type="file" name="image" id="image" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="">Location</label>
-                                <input type="text" name="location" id="" class="form-control">
+                                <label for="location">Location</label>
+                                <input type="text" name="location" id="location" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="">Phone</label>
-                                <input type="text" name="phone" id="" class="form-control">
+                                <label for="phone">Phone</label>
+                                <input type="text" name="phone" id="phone" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="">Jam Buka</label>
-                                <input type="text" name="open" id="" class="form-control">
+                                <label for="open">Jam Buka</label>
+                                <input type="text" name="open" id="open" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="">Jam Tutup</label>
-                                <input type="text" name="close" id="" class="form-control">
+                                <label for="close">Jam Tutup</label>
+                                <input type="text" name="close" id="close" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <button type="submit" class="btn btn-primary">Submit</button>
