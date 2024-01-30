@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Receipt;
 use App\Models\BahanBaku;
+use App\Models\PlanReceipt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\Foreach_;
 use Illuminate\Support\Facades\DB;
+use Psy\Readline\Hoa\Console;
 
 class ReceiptController extends Controller
 {
@@ -42,19 +45,20 @@ class ReceiptController extends Controller
      */
     public function store(Request $request)
     {
-
-        foreach ($request->idBahan as $key => $value) {
-            $receipt = new Receipt();
-
-            // Debug statements
-
-            $receipt->idProduct = $request->idProduct;
-            $receipt->quantity = $request->quantity[$key];
-            $receipt->idBahan = $request->idBahan[$key];
-            $receipt->save();
+        $plant = PlanReceipt::where('idUser', Auth::user()->idUser)->get();
+        try {
+            foreach ($plant as $key) {
+                Receipt::create([
+                    'idProduct' => $key->idProduct,
+                    'idBahan' => $key->idBahan,
+                    'quantity' => $key->Quantity,
+                ]);
+                PlanReceipt::destroy($key->idPlanReceipt);
+            }
+            return redirect()->route('resep.index')->with('success', 'Berhasil');
+        } catch (\Exception $e) {
+            return redirect()->route('resep.index')->with('error', $e->getMessage());
         }
-
-        return redirect()->route('resep.index');
     }
 
     /**

@@ -25,19 +25,18 @@ class PlanReceiptController extends Controller
                 return '
                 <div class="btn-group">             
                     <button onclick="deleteData(`'  . route('plantReceipt.destroy', ['plantReceipt' => $plant->idPlanReceipt]) . '`)" class="btn  btn-danger btn-flat">Hapus</button>
-                   
                 </div>
                 ';
             })
             ->addColumn('quantity', function ($plant) {
-                return '<input type="number" name="quantity" value="' . $plant->quantity . '" class="form-control" onchange="updateData(' . $plant->idPlanReceipt . ',this.value,`' . route('plantReceipt.update', ['plantReceipt' => $plant->idPlanReceipt]) . '`)">';
+                return '<input type="number" name="quantity" value="' . $plant->Quantity . '" class="form-control" onchange="updateData(' . $plant->idPlanReceipt . ',this.value,`' . route('plantReceipt.update', ['plantReceipt' => $plant->idPlanReceipt]) . '`)">';
             })
             ->addColumn('product_name', function ($plant) {
-                $productNames = $plant->product->pluck('name')->implode(', ');
+                $productNames = $plant->product->name;
                 return $productNames;
             })
             ->addColumn('bahanbaku_name', function ($plant) {
-                $bahanbakuNames = $plant->bahanbaku->pluck('name')->implode(', ');
+                $bahanbakuNames = $plant->bahanbaku->name;
                 return $bahanbakuNames;
             })
             ->rawColumns(['aksi', 'product_name', 'quantity'])
@@ -63,7 +62,13 @@ class PlanReceiptController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $plant = new PlanReceipt();
+        $plant->idProduct = $request->idProduct;
+        $plant->idBahan = $request->idBahan;
+        $plant->Quantity = intval($request->quantity);
+        $plant->idUser = Auth::user()->idUser;
+        $plant->save();
+        return response()->json('success', 200);
     }
 
     /**
@@ -85,16 +90,21 @@ class PlanReceiptController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PlanReceipt $planReceipt)
+    public function update(Request $request, $id)
     {
-        //
+        $plant = PlanReceipt::where('idPlanReceipt', $id)->first();
+        $plant->Quantity = intval($request->quantity);
+        $plant->save();
+        return response()->json('success', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PlanReceipt $planReceipt)
+    public function destroy($id)
     {
-        //
+        $plant = PlanReceipt::where('idPlanReceipt', $id)->first();
+        $plant->delete();
+        return response()->json('success', 200);
     }
 }
