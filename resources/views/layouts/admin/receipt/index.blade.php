@@ -54,9 +54,6 @@
                                                 class="btn btn-success">Lihat</a>
                                             <a href="{{ route('resep.edit', ['resep' => $item->idProduct]) }}"
                                                 class="btn btn-warning">Edit</a>
-                                            <a href="#"
-                                                onclick="deleteData('{{ route('resep.destroy', $item->idProduct) }}')"
-                                                class="btn btn-danger">Hapus</a>
                                         </div>
                                     </td>
                                 @else

@@ -95,7 +95,7 @@ class ReceiptController extends Controller
     {
         $receipt = Receipt::where('idReceipt', $id)->first();
         $receipt->update($request->all());
-        return redirect()->route('resep.edit', ['resep' => $receipt->idProduct]);
+        return response()->json('success', 200);
     }
 
     /**
