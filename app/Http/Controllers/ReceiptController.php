@@ -55,9 +55,9 @@ class ReceiptController extends Controller
                 ]);
                 PlanReceipt::destroy($key->idPlanReceipt);
             }
-            return redirect()->route('resep.index')->with('success', 'Berhasil');
+            return redirect()->route('resep.index')->with('success_message_create', 'Berhasil Menambahkan Data');
         } catch (\Exception $e) {
-            return redirect()->route('resep.index')->with('error', $e->getMessage());
+            return redirect()->route('resep.index')->with('error_message_create', $e->getMessage());
         }
     }
 
