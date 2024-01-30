@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Receipt;
 use App\Models\BahanBaku;
+use App\Models\PlanReceipt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\Foreach_;
 use Illuminate\Support\Facades\DB;
+use Psy\Readline\Hoa\Console;
 
 class ReceiptController extends Controller
 {
@@ -42,19 +45,20 @@ class ReceiptController extends Controller
      */
     public function store(Request $request)
     {
-
-        foreach ($request->idBahan as $key => $value) {
-            $receipt = new Receipt();
-
-            // Debug statements
-
-            $receipt->idProduct = $request->idProduct;
-            $receipt->quantity = $request->quantity[$key];
-            $receipt->idBahan = $request->idBahan[$key];
-            $receipt->save();
+        $plant = PlanReceipt::where('idUser', Auth::user()->idUser)->get();
+        try {
+            foreach ($plant as $key) {
+                Receipt::create([
+                    'idProduct' => $key->idProduct,
+                    'idBahan' => $key->idBahan,
+                    'quantity' => $key->Quantity,
+                ]);
+                PlanReceipt::destroy($key->idPlanReceipt);
+            }
+            return redirect()->route('resep.index')->with('success_message_create', 'Berhasil Menambahkan Data');
+        } catch (\Exception $e) {
+            return redirect()->route('resep.index')->with('error_message_create', $e->getMessage());
         }
-
-        return redirect()->route('resep.index');
     }
 
     /**
@@ -63,7 +67,11 @@ class ReceiptController extends Controller
     public function show($id)
     {
         $name = Receipt::where('idProduct', $id)->with('product')->first();
-        $receipt = Receipt::where('idProduct', $id)->with('product', 'bahanbaku')->get();
+        $receipt = Receipt::where('idProduct', $id)
+            ->with('product', 'bahanbaku')
+            ->groupBy('idBahan')
+            ->selectRaw('idBahan, SUM(quantity) as Quantity')
+            ->get();
         return view('layouts.admin.receipt.show', compact('receipt', 'name'));
     }
 
@@ -87,7 +95,7 @@ class ReceiptController extends Controller
     {
         $receipt = Receipt::where('idReceipt', $id)->first();
         $receipt->update($request->all());
-        return redirect()->route('resep.edit', ['resep' => $receipt->idProduct]);
+        return response()->json('success', 200);
     }
 
     /**

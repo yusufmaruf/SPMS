@@ -40,23 +40,22 @@
                         @endphp
                         @foreach ($receipt as $item)
                             <tr>
-                                <form action="{{ route('resep.update', ['resep' => $item->idReceipt]) }}" method="post">
-                                    @csrf
-                                    @method('PUT')
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $item->bahanbaku->name }}</td>
-                                    <td>
-                                        <input type="number" name="quantity" value="{{ $item->Quantity }}">
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="submit" class="btn btn-warning">Edit</button>
-                                            <button type="button" class="btn btn-danger"
-                                                onclick="deleteData('{{ route('resep.destroy', ['resep' => $item->idReceipt]) }}')">Hapus
-                                            </button>
-                                        </div>
-                                    </td>
-                                </form>
+
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $item->bahanbaku->name }}</td>
+                                <td>
+                                    <input type="number" name="quantity" value="{{ $item->Quantity }}"
+                                        class="form-control"
+                                        onchange="updateData('{{ $item->idReceipt }}', this.value, '{{ route('resep.update', ['resep' => $item->idReceipt]) }}')">
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-danger"
+                                            onclick="deleteData('{{ route('resep.destroy', ['resep' => $item->idReceipt]) }}')">Hapus
+                                        </button>
+                                    </div>
+                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -99,6 +98,25 @@
                     }
                 });
             }
+        }
+
+        function updateData(cartId, newQuantity, updateUrl) {
+            const csrfToken = $('[name=csrf-token]').attr('content');
+            $.ajax({
+                type: 'PUT',
+                url: updateUrl,
+                data: {
+                    _token: csrfToken,
+                    quantity: newQuantity,
+
+                },
+                success: function(response) {
+
+                },
+                error: function(error) {
+                    $('#updateMessage_' + cartId).text('Error updating data');
+                }
+            });
         }
     </script>
 @endpush

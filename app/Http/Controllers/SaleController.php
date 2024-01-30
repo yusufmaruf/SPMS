@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BahanBaku;
 use App\Models\Cart;
 use App\Models\Sale;
 use App\Models\Product;
@@ -11,8 +10,6 @@ use App\Models\SaleDetail;
 use App\Models\Stok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use PhpParser\Node\Stmt\TryCatch;
-use Termwind\Components\Dd;
 
 class SaleController extends Controller
 {

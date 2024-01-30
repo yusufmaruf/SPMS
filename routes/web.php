@@ -12,6 +12,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\ManajemenStokController;
 use App\Http\Controllers\DahboardController;
+use App\Http\Controllers\PlanReceiptController;
 use App\Http\Controllers\ReportSalesController;
 
 /*
@@ -39,6 +40,7 @@ route::middleware('auth')->group(function () {
     route::get('/resep/data', [ReceiptController::class, 'data'])->name('resep.data');
     route::get('/cart/data', [SaleController::class, 'data'])->name('cart.data');
     route::get('/laporanpenjualan/data', [ReportSalesController::class, 'data'])->name('laporanpenjualan.data');
+    route::get('/plantreceipt/data', [PlanReceiptController::class, 'data'])->name('plantreceipt.data');
     route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
 
     route::resource('stok', StokController::class);
@@ -47,6 +49,7 @@ route::middleware('auth')->group(function () {
     route::resource('penjualan', SaleController::class);
     route::resource('cart', CartController::class);
     route::resource('laporanpenjualan', ReportSalesController::class);
+    route::resource('plantReceipt', PlanReceiptController::class);
 
     route::prefix('admin')->middleware('admin')->group(function () {
         route::get('/bahan/data', [BahanBakuController::class, 'data'])->name('bahan.data');
