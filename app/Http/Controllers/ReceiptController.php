@@ -67,7 +67,11 @@ class ReceiptController extends Controller
     public function show($id)
     {
         $name = Receipt::where('idProduct', $id)->with('product')->first();
-        $receipt = Receipt::where('idProduct', $id)->with('product', 'bahanbaku')->get();
+        $receipt = Receipt::where('idProduct', $id)
+            ->with('product', 'bahanbaku')
+            ->groupBy('idBahan')
+            ->selectRaw('idBahan, SUM(quantity) as Quantity')
+            ->get();
         return view('layouts.admin.receipt.show', compact('receipt', 'name'));
     }
 
