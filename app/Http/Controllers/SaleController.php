@@ -68,52 +68,82 @@ class SaleController extends Controller
             $idCabang = Auth::user()->idCabang;
             $subtotal = Cart::where('idUser', Auth::user()->idUser)->sum('total');
             $payment = $request->payment;
-            Sale::create([
-                'idUser' => Auth::user()->idUser,
-                'idCabang' => $idCabang,
-                'subtotal' => $subtotal,
-                'payment' => $payment
-            ]);
 
-            try {
-                //code...
-                $cart = Cart::where('idUser', Auth::user()->idUser)->get();
+            // Check stock availability before creating the sale
+            if ($this->checkStockAvailability()) {
+                // Proceed with creating the sale
+                Sale::create([
+                    'idUser' => $idUser,
+                    'idCabang' => $idCabang,
+                    'subtotal' => $subtotal,
+                    'payment' => $payment
+                ]);
+
+                $cart = Cart::where('idUser', $idUser)->get();
+
                 foreach ($cart as $item) {
+                    // Create sale details
                     SaleDetail::create([
                         'idSales' => Sale::latest()->first()->idSales,
                         'idProduk' => $item->idProduct,
                         'quantity' => $item->quantity,
                         'total' => $item->total
                     ]);
+
+                    // Remove the item from the cart
                     Cart::destroy($item->idCart);
 
-                    try {
-                        //code...
-                        $Bahan = Receipt::where('idProduct', $item->idProduct)->get();
-                        foreach ($Bahan as $receiptItem) {
-                            $stokItem = Stok::where('idBahan', $receiptItem->idBahan)
-                                ->where('idCabang', Auth::user()->idCabang)
-                                ->first();
-
-                            if ($stokItem) {
-                                $pengurangan = $receiptItem->Quantity * $item->quantity;
-                                // Gunakan decrement hanya jika $stokItem ditemukan
-                                $stokItem->decrement('jumlah', $pengurangan);
-                            } else {
-                                // Handle jika $stokItem tidak ditemukan
-                                // (Anda dapat menentukan tindakan yang sesuai, misalnya, log pesan atau memberi tahu pengguna)
-                            }
-                        }
-                    } catch (\Throwable $th) {
-                        throw $th;
-                    }
+                    // Update stock
+                    $this->updateStock($item->idProduct, $item->quantity);
                 }
-            } catch (\Throwable $th) {
-                throw $th;
+
+                return redirect()->route('penjualan.index')->with('success', 'Berhasil Menambahkan');
+            } else {
+                // Handle insufficient stock situation (e.g., display an error message)
+                return redirect()->route('penjualan.index')->with('error', 'Stok tidak mencukupi');
             }
-            return redirect()->route('penjualan.index')->with('success', 'Berhasil Menambahkan');
         } catch (\Throwable $th) {
-            throw $th;
+            // Handle other exceptions
+            return redirect()->route('penjualan.index')->with('error', 'Terjadi kesalahan');
+        }
+    }
+
+    private function checkStockAvailability()
+    {
+        $cart = Cart::where('idUser', Auth::user()->idUser)->get();
+
+        foreach ($cart as $item) {
+            $receipts = Receipt::where('idProduct', $item->idProduct)->get();
+
+            foreach ($receipts as $receiptItem) {
+                $stokItem = Stok::where('idBahan', $receiptItem->idBahan)
+                    ->where('idCabang', Auth::user()->idCabang)
+                    ->first();
+
+                if (!$stokItem || $stokItem->jumlah < ($receiptItem->Quantity * $item->quantity)) {
+                    return false; // Insufficient stock
+                }
+            }
+        }
+
+        return true; // Stock is available for all items in the cart
+    }
+
+    private function updateStock($productId, $quantity)
+    {
+        $receipts = Receipt::where('idProduct', $productId)->get();
+
+        foreach ($receipts as $receiptItem) {
+            $stokItem = Stok::where('idBahan', $receiptItem->idBahan)
+                ->where('idCabang', Auth::user()->idCabang)
+                ->first();
+
+            if ($stokItem) {
+                $pengurangan = $receiptItem->Quantity * $quantity;
+                $stokItem->decrement('jumlah', $pengurangan);
+            }
+            // Note: If $stokItem is not found, it will be ignored here.
+            // You may want to handle this situation depending on your requirements.
         }
     }
 

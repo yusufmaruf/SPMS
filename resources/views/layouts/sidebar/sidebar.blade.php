@@ -77,6 +77,12 @@
                     <div data-i18n="Cabang">Cabang</div>
                 </a>
             </li>
+            <li class="menu-item {{ request()->is('pengguna*') ? 'active' : '' }}">
+                <a href="{{ route('pengguna.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-users"></i>
+                    <div data-i18n="Karyawan">Karyawan</div>
+                </a>
+            </li>
         @endif
         <li class="menu-item {{ request()->is('resep*') ? 'active' : '' }}">
             <a href="{{ route('resep.index') }}" class="menu-link">
