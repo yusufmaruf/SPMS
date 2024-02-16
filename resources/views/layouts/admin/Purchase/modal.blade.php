@@ -8,7 +8,7 @@
                     <h3 class="address-title mb-2">Tambah Purchase</h3>
                     <p class="text-muted address-subtitle">Silahkan masukan data Purchase</p>
                 </div>
-                <form id="addNewAddressForm" class="row g-3" action="{{ route('bahanbaku.store') }}" method="post"
+                <form id="addNewAddressForm" class="row g-3" action="{{ route('pembelian.store') }}" method="post"
                     novalidate enctype="multipart/form-data">
                     @csrf
                     <div class="col-12">
@@ -41,7 +41,7 @@
                     <h3 class="address-title mb-2">Edit Data Purchase</h3>
                     <p class="text-muted address-subtitle">Silahkan Perbarui Data Purchase Terbaru</p>
                 </div>
-                <form id="bahanbakuupdate" class="row g-3" method="POST" novalidate enctype="multipart/form-data">
+                <form id="purchaseUpdate" class="row g-3" method="POST" novalidate enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
 
@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label" for="name">Jumlah Transaksi</label>
-                        <input type="number" id="total" name="total" class="form-control" />
+                        <input type="number" id="totalEdit" name="total" class="form-control" />
                     </div>
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
@@ -75,7 +75,7 @@
                     <h3 class="address-title mb-2">Delete Bahan Baku</h3>
                     <p class="text-muted address-subtitle">apakah anda yakin akan menghapus data</p>
                 </div>
-                <form id="bahanbakudelete" class="row g-3" method="POST" novalidate enctype="multipart/form-data">
+                <form id="purchaseDelete" class="row g-3" method="POST" novalidate enctype="multipart/form-data">
                     @method('DELETE')
                     @csrf
                     <div class="col-12 text-center">

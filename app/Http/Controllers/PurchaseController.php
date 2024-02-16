@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Purchase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseController extends Controller
 {
@@ -17,7 +18,7 @@ class PurchaseController extends Controller
 
     public function data()
     {
-        $purchase = Purchase::orderBy('idPurchase', 'desc')->get();
+        $purchase = Purchase::orderBy('created_at', 'desc')->get();
         return datatables()
             ->of($purchase)
             ->addIndexColumn()
@@ -27,10 +28,13 @@ class PurchaseController extends Controller
             ->addColumn('cabang', function ($purchase) {
                 return $purchase->cabang->name;
             })
+            ->addColumn('tanggal', function ($purchase) {
+                return $purchase->created_at->format('d-m-y');
+            })
             ->addColumn('user', function ($purchase) {
                 return $purchase->user->name;
             })
-            ->rawColumns(['aksi', 'cabang', 'user'])
+            ->rawColumns(['aksi', 'cabang', 'user', 'tanggal'])
             ->make(true);
     }
 
@@ -47,15 +51,28 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(
+            [
+                'name' => 'required|max:255|string',
+                'total' => 'required|integer',
+            ]
+        );
+        $request['idUser'] = Auth::user()->idUser;
+        $request['idCabang'] = Auth::user()->idCabang;
+        $request['idTransaction'] = 2;
+        $data = $request->all();
+        Purchase::create($data);
+        $message = 'Berhasil Menambahkan Purchase';
+        return redirect()->route('pembelian.index')->with('success_message_create', $message);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Purchase $purchase)
+    public function show($id)
     {
-        //
+        $data = Purchase::where('idPurchase', $id)->first();
+        return response()->json(['result' => $data], 200);
     }
 
     /**
@@ -69,16 +86,29 @@ class PurchaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Purchase $purchase)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate(
+            [
+                'name' => 'required|max:255|string',
+                'total' => 'required|integer',
+            ]
+        );
+        $purchase = Purchase::findOrFail($id);
+        $data = $request->all();
+        $purchase->update($data);
+        $message = 'Berhasil Mengedit Purchase';
+        return redirect()->route('pembelian.index')->with('success_message_update', $message);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Purchase $purchase)
+    public function destroy($id)
     {
-        //
+        $purchase = Purchase::findOrFail($id);
+        $purchase->delete();
+        $message = 'Berhasil Menghapus Purchase';
+        return redirect()->route('pembelian.index')->with('success_message_delete', $message);
     }
 }

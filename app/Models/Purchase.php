@@ -10,7 +10,7 @@ class Purchase extends Model
     use HasFactory;
     protected $primaryKey = 'idPurchase';
     protected $fillable = [
-        'idPurchase', 'idUser', 'idCabang', 'name', 'total'
+        'idPurchase', 'idUser', 'idCabang', 'name', 'total', 'idTransaction'
     ];
 
     public function user()

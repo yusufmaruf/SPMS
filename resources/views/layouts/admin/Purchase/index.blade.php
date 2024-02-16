@@ -31,6 +31,7 @@
                     <thead>
                         <tr>
                             <th width="10%">No</th>
+                            <th>Tanggal</th>
                             <th>transaksi</th>
                             <th>cabang</th>
                             <th>User</th>
@@ -54,15 +55,15 @@
             $('body').on('click', '.tombol-edit', function(e) {
                 var id = $(this).data('id');
                 $.ajax({
-                    url: '{{ route('bahanbaku.show', ['bahanbaku' => ':id']) }}'.replace(':id',
+                    url: '{{ route('pembelian.show', ['pembelian' => ':id']) }}'.replace(':id',
                         id),
                     type: 'GET',
                     success: function(response) {
                         $('#editdata').modal('show');
                         $('#nameEdit').val(response.result.name);
-                        console.log(response.result.idBahan);
-                        $('#bahanbakuupdate').attr('action',
-                            '{{ route('bahanbaku.update', ['bahanbaku' => ':id']) }}'
+                        $('#totalEdit').val(response.result.total);
+                        $('#purchaseUpdate').attr('action',
+                            '{{ route('pembelian.update', ['pembelian' => ':id']) }}'
                             .replace(':id',
                                 id));
 
@@ -75,7 +76,7 @@
                 var id = $(this).data('id');
 
                 $.ajax({
-                    url: '{{ route('bahanbaku.show', ['bahanbaku' => ':id']) }}'.replace(':id',
+                    url: '{{ route('pembelian.show', ['pembelian' => ':id']) }}'.replace(':id',
                         id),
                     type: 'GET',
                     success: function(response) {
@@ -91,8 +92,8 @@
                         $('.content-data').append(nameParagraph);
 
                         // Update the form action attribute
-                        $('#bahanbakudelete').attr('action',
-                            '/admin/bahanbaku/' + id);
+                        $('#purchaseDelete').attr('action',
+                            '/pembelian/' + id);
                     }
                 });
 
@@ -126,6 +127,8 @@
                 },
                 columns: [{
                         data: 'DT_RowIndex',
+                    }, {
+                        data: 'tanggal',
                     }, {
                         data: 'name',
                     },

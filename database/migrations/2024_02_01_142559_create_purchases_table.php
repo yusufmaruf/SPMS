@@ -16,7 +16,6 @@ return new class extends Migration
             $table->integer('idUser');
             $table->integer('idCabang');
             $table->integer('idTransaction');
-            $table->string('detailTransactionPurchase');
             $table->string('name');
             $table->bigInteger('total');
             $table->timestamps();
