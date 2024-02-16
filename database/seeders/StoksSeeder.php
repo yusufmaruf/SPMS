@@ -17,13 +17,13 @@ class StoksSeeder extends Seeder
             [
                 'idStok' => 1,
                 'idBahan' => 1,
-                'idCabang' => 2,
+                'idCabang' => 1,
                 'jumlah' => 100,
             ],
             [
                 'idStok' => 2,
                 'idBahan' => 2,
-                'idCabang' => 2,
+                'idCabang' => 1,
                 'jumlah' => 100,
             ],
         ];

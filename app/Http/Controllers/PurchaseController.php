@@ -12,7 +12,26 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        //
+        return view('layouts.admin.Purchase.index');
+    }
+
+    public function data()
+    {
+        $purchase = Purchase::orderBy('idPurchase', 'desc')->get();
+        return datatables()
+            ->of($purchase)
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($purchase) {
+                return view('layouts.admin.Purchase.tombol', ['data' => $purchase]);
+            })
+            ->addColumn('cabang', function ($purchase) {
+                return $purchase->cabang->name;
+            })
+            ->addColumn('user', function ($purchase) {
+                return $purchase->user->name;
+            })
+            ->rawColumns(['aksi', 'cabang', 'user'])
+            ->make(true);
     }
 
     /**

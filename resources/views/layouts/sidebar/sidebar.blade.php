@@ -103,6 +103,12 @@
                 <div data-i18n="Penjualan">Penjualan Cabang</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('pembelian*') ? 'active' : '' }}">
+            <a href="{{ route('pembelian.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                <div data-i18n="Purchase">Purchase Cabang</div>
+            </a>
+        </li>
         {{-- <li class="menu-item">
             <a href="{{ route('penjualan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-download"></i>

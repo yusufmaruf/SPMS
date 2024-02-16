@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CabangSeeder::class);
         $this->call(StoksSeeder::class);
         $this->call(ReceiptSeeder::class);
+        $this->call(TransactionSeeder::class);
     }
 }

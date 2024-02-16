@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Receipt;
 use App\Models\SaleDetail;
 use App\Models\Stok;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -68,6 +69,7 @@ class SaleController extends Controller
             $idCabang = Auth::user()->idCabang;
             $subtotal = Cart::where('idUser', Auth::user()->idUser)->sum('total');
             $payment = $request->payment;
+            $dateNow = Carbon::today()->toDateString();
 
             // Check stock availability before creating the sale
             if ($this->checkStockAvailability()) {
@@ -76,7 +78,9 @@ class SaleController extends Controller
                     'idUser' => $idUser,
                     'idCabang' => $idCabang,
                     'subtotal' => $subtotal,
-                    'payment' => $payment
+                    'payment' => $payment,
+                    'idTransaction' => 1,
+                    'detailTransactionSale' => 'Penjualan ' . $dateNow,
                 ]);
 
                 $cart = Cart::where('idUser', $idUser)->get();

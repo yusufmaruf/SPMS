@@ -10,7 +10,7 @@ class Sale extends Model
     use HasFactory;
     protected $primaryKey = 'idSale';
     protected $fillable = [
-        'idUser',    'idCabang',  'subtotal', 'payment'
+        'idUser',    'idCabang',  'subtotal', 'payment', 'idTransaction', 'detailTransactionSale'
     ];
 
     public function user()

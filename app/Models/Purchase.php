@@ -10,6 +10,16 @@ class Purchase extends Model
     use HasFactory;
     protected $primaryKey = 'idPurchase';
     protected $fillable = [
-        'name', 'slug', 'image', 'price', 'description'
+        'idPurchase', 'idUser', 'idCabang', 'name', 'total'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'idUser', 'idUser');
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class, 'idCabang', 'idCabang');
+    }
 }
