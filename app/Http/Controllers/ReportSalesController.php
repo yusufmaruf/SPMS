@@ -33,7 +33,7 @@ class ReportSalesController extends Controller
                 return '
                 <div class="btn-group">
                     <a class="btn  btn-primary btn-flat" href="' . route('laporanpenjualan.show', $sale->idSales) . '">
-                        Sunting
+                        Lihat Detail
                     </a>
                 </div>
                 ';

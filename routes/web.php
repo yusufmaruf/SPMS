@@ -14,6 +14,7 @@ use App\Http\Controllers\ManajemenStokController;
 use App\Http\Controllers\DahboardController;
 use App\Http\Controllers\PlanReceiptController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\PurchaseReportController;
 use App\Http\Controllers\ReportSalesController;
 use App\Http\Controllers\UserController;
 
@@ -46,6 +47,7 @@ route::middleware('auth')->group(function () {
     route::get('/laporanpenjualan/data', [ReportSalesController::class, 'data'])->name('laporanpenjualan.data');
     route::get('/plantreceipt/data', [PlanReceiptController::class, 'data'])->name('plantreceipt.data');
     route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
+    route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
 
     route::resource('stok', StokController::class);
     route::resource('pengguna', UserController::class);
@@ -56,6 +58,7 @@ route::middleware('auth')->group(function () {
     route::resource('laporanpenjualan', ReportSalesController::class);
     route::resource('plantReceipt', PlanReceiptController::class);
     route::resource('pembelian', PurchaseController::class);
+    route::resource('reportpurchase', PurchaseReportController::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {

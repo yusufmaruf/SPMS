@@ -33,7 +33,7 @@
                             <th>Kasir</th>
                             <th>Subtotal</th>
                             <th>Payment</th>
-                            <th width="10%">Action</th>
+                            <th width="20%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
