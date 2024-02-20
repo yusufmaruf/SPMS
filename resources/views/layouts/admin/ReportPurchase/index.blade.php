@@ -41,6 +41,7 @@
                         </div>
                     </div>
                 </form>
+                <a id="download-link" class="btn btn-vimeo d-flex m-4" href="#">Download Laporan</a>
                 <table class="datatables-basic table">
                     <thead>
                         <tr>
@@ -73,8 +74,8 @@
                 ajax: {
                     url: '{{ route('reportpurchase.data') }}',
                     data: function(d) {
-                        d.dari = $('#dari').val();
-                        d.sampai = $('#sampai').val();
+                        d.dari = $('#dari').val(); // Ambil nilai tanggal dari input "dari"
+                        d.sampai = $('#sampai').val(); // Ambil nilai tanggal dari input "sampai"
                     }
                 },
                 columns: [{
@@ -99,6 +100,14 @@
             $('#form-filter').on('submit', function(event) {
                 event.preventDefault();
                 table.ajax.reload();
+
+                // Setelah menekan tombol "Filter", buatlah tautan unduh laporan yang sesuai dengan tanggal yang telah dipilih
+                let dari = $('#dari').val();
+                let sampai = $('#sampai').val();
+                let downloadLink = '{{ route('reportpurchase.print') }}?dari=' + dari + '&sampai=' +
+                sampai;
+                $('#download-link').attr('href',
+                downloadLink); // Atur href tautan unduhan dengan URL yang sesuai
             });
         });
     </script>

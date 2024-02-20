@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Purchase;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 class PurchaseReportController extends Controller
 {
@@ -22,6 +24,29 @@ class PurchaseReportController extends Controller
     public function create()
     {
     }
+
+    public function print(Request $request)
+    {
+        $startDate = now()->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        if ($request->dari !== null) {
+            $startDate = Carbon::parse($request->dari);
+        }
+        if ($request->sampai !== null) {
+            $endDate = Carbon::parse($request->sampai);
+        }
+        $purchase = Purchase::whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // return view('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
+
+        $pdf = FacadePdf::loadView('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
+        return $pdf->download('purchase_' . Carbon::now()->format('Ymd') . '.pdf');
+    }
+
+
+
     public function data(Request $request)
     {
         // ambil data untuk bulan ini
