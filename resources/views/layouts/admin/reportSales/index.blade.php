@@ -1,6 +1,4 @@
 @extends('layouts.master')
-
-<!-- Vendors CSS -->
 @push('style')
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
@@ -17,103 +15,101 @@
 @endpush
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Report /</span> Report Sales</h4>
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Data Purchase /</span> Data Purchase</h4>
         <!-- DataTable with Buttons -->
         <div class="card">
             <div class="card-datatable table-responsive pt-0">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Data Sales</h5>
+                    <h5 class="card-title mb-0">Data Purchase
+                    </h5>
                 </div>
-                <table class="table table-dt">
+                <form id="form-filter" class="m-3" method="get">
+                    @csrf
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <label class="form-label">Dari Tanggal</label>
+                            <input type="date" id="dari" name="dari" class="form-control flatpickr"
+                                value="" />
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Sampai Tanggal</label>
+                            <input type="date" id="sampai" name="sampai" class="form-control flatpickr"
+                                value="" />
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100 mt-4">Filter</button>
+                        </div>
+                    </div>
+                </form>
+                <a id="download-link" class="btn btn-vimeo d-flex m-4" href="#">Download Laporan</a>
+                <table class="datatables-basic table">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Tanggal Transaksi</th>
-                            <th>Cabang</th>
-                            <th>Kasir</th>
-                            <th>Subtotal</th>
-                            <th>Payment</th>
-                            <th width="20%">Aksi</th>
+                            <th width="10%">No</th>
+                            <th>Tanggal</th>
+                            <th>transaksi</th>
+                            <th>cabang</th>
+                            <th>User</th>
+                            <th>total</th>
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+    @includeIf('layouts.admin.Purchase.modal')
 @endsection
 
 @push('script')
-    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.js"></script>
-
-
+    <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script>
-        let table; // Declare table as a global variable
-
         $(document).ready(function() {
-            table = $('.table').DataTable({
+            let table = $('.datatables-basic').DataTable({
                 responsive: true,
                 processing: true,
                 serverSide: true,
                 autoWidth: false,
                 ajax: {
                     url: '{{ route('laporanpenjualan.data') }}',
+                    data: function(d) {
+                        d.dari = $('#dari').val(); // Ambil nilai tanggal dari input "dari"
+                        d.sampai = $('#sampai').val(); // Ambil nilai tanggal dari input "sampai"
+                    }
                 },
                 columns: [{
-                    data: 'DT_RowIndex',
-                }, {
-                    data: 'created_at',
-                    render: function(data, type, full, meta) {
-                        // Format tanggal
-                        if (type === 'display') {
-                            var date = new Date(data);
-                            return date.toLocaleDateString('id-ID');
-                        }
-                        return data;
+                        data: 'DT_RowIndex',
+                    }, {
+                        data: 'formatted_created_at',
+                    },
+                    {
+                        data: 'detailTransactionSale'
+                    },
+                    {
+                        data: 'cabang'
+                    },
+                    {
+                        data: 'user'
+                    },
+                    {
+                        data: 'total_subtotal'
                     }
-
-                }, {
-                    data: 'cabang.name',
-                }, {
-                    data: 'user.name'
-                }, {
-                    data: 'subtotal'
-                }, {
-                    data: 'payment'
-                }, {
-                    data: 'aksi',
-                }],
+                ],
             });
 
-            if ("{{ auth()->user()->role }}" === 'admin') {
-                table.column(5).visible(true); // Kolom 'aksi' memiliki indeks 5 (mulai dari 0)
-            } else {
-                table.column(5).visible(false);
-            }
+            $('#form-filter').on('submit', function(event) {
+                event.preventDefault();
+                table.ajax.reload();
+
+                // Setelah menekan tombol "Filter", buatlah tautan unduh laporan yang sesuai dengan tanggal yang telah dipilih
+                let dari = $('#dari').val();
+                let sampai = $('#sampai').val();
+                let downloadLink = '{{ route('reportsales.print') }}?dari=' + dari + '&sampai=' +
+                    sampai;
+                $('#download-link').attr('href',
+                    downloadLink); // Atur href tautan unduhan dengan URL yang sesuai
+            });
         });
-
-        function deleteData(url) {
-            if (confirm('Yakin ingin menghapus data terpilih?')) {
-                // Get the CSRF token from the meta tag.
-                const csrfToken = $('[name=csrf-token]').attr('content');
-
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        '_token': csrfToken,
-                        '_method': 'delete'
-                    },
-                    success: function(response) {
-                        table.ajax.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Tidak dapat menghapus data');
-                    }
-                });
-            }
-        }
     </script>
 @endpush

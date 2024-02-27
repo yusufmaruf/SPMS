@@ -48,6 +48,7 @@ route::middleware('auth')->group(function () {
     route::get('/plantreceipt/data', [PlanReceiptController::class, 'data'])->name('plantreceipt.data');
     route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
     route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
+    route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
 
     route::resource('stok', StokController::class);

@@ -105,9 +105,9 @@
                 let dari = $('#dari').val();
                 let sampai = $('#sampai').val();
                 let downloadLink = '{{ route('reportpurchase.print') }}?dari=' + dari + '&sampai=' +
-                sampai;
+                    sampai;
                 $('#download-link').attr('href',
-                downloadLink); // Atur href tautan unduhan dengan URL yang sesuai
+                    downloadLink); // Atur href tautan unduhan dengan URL yang sesuai
             });
         });
     </script>
