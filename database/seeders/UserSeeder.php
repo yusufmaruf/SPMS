@@ -18,26 +18,50 @@ class UserSeeder extends Seeder
             [
                 'idUser' => 1,
                 'name' => 'manager',
-                'email' => 'manager@manager',
+                'email' => 'manager@kebabsiabah',
                 'password' => Hash::make('manager'),
                 'role' => 'admin',
                 'idCabang' => 1
             ],
             [
                 'idUser' => 2,
-                'name' => 'cabang1',
-                'email' => 'cabang@cabang',
-                'password' => Hash::make('cabang'),
+                'name' => 'admin',
+                'email' => 'admin@kebabsiabah',
+                'password' => Hash::make('admin'),
                 'role' => 'user',
                 'idCabang' => 2
             ],
             [
                 'idUser' => 3,
-                'name' => 'cabang2',
-                'email' => 'cabang2@cabang',
+                'name' => 'Gor Tuban',
+                'email' => 'cabanggor@kebabsiabah',
                 'password' => Hash::make('cabang'),
                 'role' => 'user',
                 'idCabang' => 3
+            ],
+            [
+                'idUser' => 4,
+                'name' => 'Cabang Merakurak',
+                'email' => 'cabangMerakurak@kebabsiabah',
+                'password' => Hash::make('cabang'),
+                'role' => 'user',
+                'idCabang' => 4
+            ],
+            [
+                'idUser' => 5,
+                'name' => 'Cabang Bogorejo',
+                'email' => 'cabangBogorejo@kebabsiabah',
+                'password' => Hash::make('cabang'),
+                'role' => 'user',
+                'idCabang' => 5
+            ],
+            [
+                'idUser' => 6,
+                'name' => 'Cabang Wiyung',
+                'email' => 'cabangwiyung@kebabsiabah',
+                'password' => Hash::make('cabang'),
+                'role' => 'user',
+                'idCabang' => 6
             ],
         ];
         User::insert($user);
