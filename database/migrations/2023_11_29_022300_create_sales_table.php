@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id('idSales');
             $table->integer('idUser');
+            $table->integer('idTransaction');
+            $table->string('detailTransactionSale');
             $table->integer('idCabang');
             $table->integer('subtotal');
             $table->enum('payment', ['cash', 'qris']);

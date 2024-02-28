@@ -18,6 +18,7 @@ class DahboardController extends Controller
      */
     public function index()
     {
+
         $awalBulan = Carbon::now()->startOfMonth();
         $akhirBulan = Carbon::now()->endOfMonth();
         if (Auth::user()->role == 'admin') {

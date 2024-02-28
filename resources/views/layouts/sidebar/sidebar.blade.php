@@ -77,6 +77,12 @@
                     <div data-i18n="Cabang">Cabang</div>
                 </a>
             </li>
+            <li class="menu-item {{ request()->is('pengguna*') ? 'active' : '' }}">
+                <a href="{{ route('pengguna.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-users"></i>
+                    <div data-i18n="Karyawan">Karyawan</div>
+                </a>
+            </li>
         @endif
         <li class="menu-item {{ request()->is('resep*') ? 'active' : '' }}">
             <a href="{{ route('resep.index') }}" class="menu-link">
@@ -97,6 +103,12 @@
                 <div data-i18n="Penjualan">Penjualan Cabang</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('pembelian*') ? 'active' : '' }}">
+            <a href="{{ route('pembelian.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                <div data-i18n="Purchase">Purchase Cabang</div>
+            </a>
+        </li>
         {{-- <li class="menu-item">
             <a href="{{ route('penjualan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-download"></i>
@@ -115,12 +127,12 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Laporan Penjualan</span>
         </li>
-        {{-- <li class="menu-item">
-            <a href="tables-basic.html" class="menu-link">
+        <li class="menu-item  {{ request()->is('reportpurchase*') ? 'active' : '' }}">
+            <a href="{{ route('reportpurchase.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-report-money"></i>
                 <div data-i18n="Laporan Pengeluran">Laporan Pengeluran</div>
             </a>
-        </li> --}}
+        </li>
         <li class="menu-item {{ request()->is('laporanpenjualan*') ? 'active' : '' }}">
             <a href="{{ route('laporanpenjualan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-report-analytics"></i>

@@ -28,11 +28,55 @@ class BahanBakuSeeder extends Seeder
                 'idBahan' => 3,
                 'name' => 'Tortila Besar',
                 'slug' => 'tortila-besar',
+            ], [
+                'idBahan' => 4,
+                'name' => 'Tortila jumbo',
+                'slug' => 'tortila-jumbo',
             ],
             [
-                'idBahan' => 4,
+                'idBahan' => 5,
+                'name' => 'Sosis',
+                'slug' => 'sosis',
+            ],
+            [
+                'idBahan' => 6,
+                'name' => 'Keju',
+                'slug' => 'keju',
+            ],
+            [
+                'idBahan' => 7,
+                'name' => 'Telur',
+                'slug' => 'telur',
+            ],
+            [
+                'idBahan' => 8,
+                'name' => 'Kentang',
+                'slug' => 'Kentang',
+            ],
+            [
+                'idBahan' => 9,
+                'name' => 'Daging Kebab Sapi',
+                'slug' => 'daging-kebab-sapi',
+            ],
+            [
+                'idBahan' => 10,
                 'name' => 'Saus Tomat',
                 'slug' => 'saus-tomat',
+            ],
+            [
+                'idBahan' => 11,
+                'name' => 'Saus pedas',
+                'slug' => 'saus-pedas',
+            ],
+            [
+                'idBahan' => 12,
+                'name' => 'Mayonaise',
+                'slug' => 'mayonaise',
+            ],
+            [
+                'idBahan' => 13,
+                'name' => 'Bumbu',
+                'slug' => 'bumbu',
             ],
 
         ];

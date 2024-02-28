@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Sale extends Model
+class Purchase extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'idSale';
+    protected $primaryKey = 'idPurchase';
     protected $fillable = [
-        'idUser',    'idCabang',  'subtotal', 'payment', 'idTransaction', 'detailTransactionSale'
+        'idPurchase', 'idUser', 'idCabang', 'name', 'total', 'idTransaction'
     ];
 
     public function user()

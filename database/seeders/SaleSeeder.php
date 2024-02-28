@@ -14,7 +14,36 @@ class SaleSeeder extends Seeder
      */
     public function run(): void
     {
+        //penjualan oktober
         $csvFile = database_path('seeders/penjualanoktober.csv');
+        $csv = array_map('str_getcsv', file($csvFile));
+        $headers = $csv[0];
+
+        foreach (array_slice($csv, 1) as $row) {
+            // Validasi jumlah kolom
+            if (count($row) === count($headers)) {
+                DB::table('sales')->insert(array_combine($headers, $row));
+            } else {
+                // Tangani kesalahan atau log pesan jika diperlukan
+                echo "Jumlah kolom tidak sesuai.\n";
+            }
+        }
+        //penjualan September
+        $csvFile = database_path('seeders/penjualanSeptember.csv');
+        $csv = array_map('str_getcsv', file($csvFile));
+        $headers = $csv[0];
+
+        foreach (array_slice($csv, 1) as $row) {
+            // Validasi jumlah kolom
+            if (count($row) === count($headers)) {
+                DB::table('sales')->insert(array_combine($headers, $row));
+            } else {
+                // Tangani kesalahan atau log pesan jika diperlukan
+                echo "Jumlah kolom tidak sesuai.\n";
+            }
+        }
+        //penjualan September
+        $csvFile = database_path('seeders/penjualanAgustus.csv');
         $csv = array_map('str_getcsv', file($csvFile));
         $headers = $csv[0];
 

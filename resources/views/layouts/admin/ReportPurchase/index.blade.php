@@ -72,7 +72,7 @@
                 serverSide: true,
                 autoWidth: false,
                 ajax: {
-                    url: '{{ route('laporanpenjualan.data') }}',
+                    url: '{{ route('reportpurchase.data') }}',
                     data: function(d) {
                         d.dari = $('#dari').val(); // Ambil nilai tanggal dari input "dari"
                         d.sampai = $('#sampai').val(); // Ambil nilai tanggal dari input "sampai"
@@ -81,19 +81,18 @@
                 columns: [{
                         data: 'DT_RowIndex',
                     }, {
-                        data: 'formatted_created_at',
+                        data: 'tanggal',
+                    }, {
+                        data: 'name',
                     },
                     {
-                        data: 'detailTransactionSale'
+                        data: 'cabang',
                     },
                     {
-                        data: 'cabang'
+                        data: 'user',
                     },
                     {
-                        data: 'user'
-                    },
-                    {
-                        data: 'total_subtotal'
+                        data: 'total',
                     }
                 ],
             });
@@ -105,7 +104,7 @@
                 // Setelah menekan tombol "Filter", buatlah tautan unduh laporan yang sesuai dengan tanggal yang telah dipilih
                 let dari = $('#dari').val();
                 let sampai = $('#sampai').val();
-                let downloadLink = '{{ route('reportsales.print') }}?dari=' + dari + '&sampai=' +
+                let downloadLink = '{{ route('reportpurchase.print') }}?dari=' + dari + '&sampai=' +
                     sampai;
                 $('#download-link').attr('href',
                     downloadLink); // Atur href tautan unduhan dengan URL yang sesuai

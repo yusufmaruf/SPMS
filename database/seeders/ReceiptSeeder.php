@@ -15,11 +15,6 @@ class ReceiptSeeder extends Seeder
     {
         $receipt = [
             [
-                'idReceipt' => 1,
-                'idProduct' => 1,
-                'idBahan' => 2,
-                'Quantity' => 1,
-            ], [
                 'idReceipt' => 2,
                 'idProduct' => 1,
                 'idBahan' => 1,

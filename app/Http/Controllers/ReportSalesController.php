@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Purchase;
 use Carbon\Carbon;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+
 
 class ReportSalesController extends Controller
 {
@@ -19,29 +23,70 @@ class ReportSalesController extends Controller
         return view('layouts.admin.reportSales.index');
     }
 
-    public function data()
+    public function print(Request $request)
     {
-        if (Auth::user()->role == 'admin') {
-            $sale = Sale::with('user', 'cabang')->orderBy('created_at', 'desc')->get();
-        } else {
-            $sale = Sale::where('idCabang', Auth::user()->idCabang)->with('user', 'cabang')->orderBy('created_at', 'desc')->get();
+        $starDate = now()->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        if ($request->dari !== null) {
+            $starDate = Carbon::parse($request->dari);
         }
+        if ($request->sampai !== null) {
+            $endDate = Carbon::parse($request->sampai);
+        }
+
+        $purchase = Sale::select(
+            DB::raw('SUM(subtotal) as total_subtotal'),
+            'idUser',
+            'detailTransactionSale',
+            'idCabang',
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
+        )
+            ->whereBetween('created_at', [$starDate, $endDate])
+            ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
+            ->get();
+        // return view('layouts.admin.ReportSales.print', compact('purchase', 'starDate', 'endDate'));
+
+        $pdf = FacadePdf::loadView('layouts.admin.ReportSales.print', compact('purchase', 'starDate', 'endDate'));
+        return $pdf->download('sales_' . Carbon::now()->format('Ymd') . '.pdf');
+    }
+
+    public function data(Request $request)
+    { // ambil data untuk bulan ini
+        $starDate = now()->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        if ($request->dari !== null) {
+            $starDate = Carbon::parse($request->dari);
+        }
+        if ($request->sampai !== null) {
+            $endDate = Carbon::parse($request->sampai);
+        }
+
+        $purchase = Sale::select(
+            DB::raw('SUM(subtotal) as total_subtotal'),
+            'idUser',
+            'detailTransactionSale',
+            'idCabang',
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
+        )
+            ->whereBetween('created_at', [$starDate, $endDate])
+            ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
+            ->get();
+
         return datatables()
-            ->of($sale)
+            ->of($purchase)
             ->addIndexColumn()
-            ->addColumn('aksi', function ($sale) {
-                return '
-                <div class="btn-group">
-                    <a class="btn  btn-primary btn-flat" href="' . route('laporanpenjualan.show', $sale->idSales) . '">
-                        Sunting
-                    </a>
-                </div>
-                ';
+            ->addColumn('cabang', function ($purchase) {
+                return $purchase->cabang->name;
             })
-            ->addColumn('desc', function ($sale) {
-                return '<p>' . $sale->description . '</p>';
+            ->addColumn('user', function ($purchase) {
+                return $purchase->user->name;
             })
-            ->rawColumns(['aksi', 'desc', 'image'])
+            ->addColumn('total_subtotal', function ($purchase) {
+                return 'Rp. ' . number_format($purchase->total_subtotal, 0, ',', '.');
+            })
+            ->rawColumns(['cabang', 'user', 'total_subtotal'])
             ->make(true);
     }
 
