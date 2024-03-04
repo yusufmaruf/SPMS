@@ -51,6 +51,7 @@ route::middleware('auth')->group(function () {
     route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
     route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
+    route::get('forecast/predict', [ForecastController::class, 'prediction'])->name('forecast.prediction');
 
     route::resource('stok', StokController::class);
     route::resource('pengguna', UserController::class);
