@@ -13,7 +13,7 @@ class SaleDetailOtober extends Seeder
      */
     public function run(): void
     {
-        $csvFile = database_path('seeders/salesdetail.csv');
+        $csvFile = database_path('seeders/salesDetails.csv');
         $csv = array_map('str_getcsv', file($csvFile));
         $headers = $csv[0];
 

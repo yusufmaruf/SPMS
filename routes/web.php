@@ -12,6 +12,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\ManajemenStokController;
 use App\Http\Controllers\DahboardController;
+use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\PlanReceiptController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseReportController;
@@ -50,6 +51,7 @@ route::middleware('auth')->group(function () {
     route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
     route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
+    route::get('forecast/predict', [ForecastController::class, 'prediction'])->name('forecast.prediction');
 
     route::resource('stok', StokController::class);
     route::resource('pengguna', UserController::class);
@@ -61,6 +63,7 @@ route::middleware('auth')->group(function () {
     route::resource('plantReceipt', PlanReceiptController::class);
     route::resource('pembelian', PurchaseController::class);
     route::resource('reportpurchase', PurchaseReportController::class);
+    route::resource('forecast', ForecastController::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {

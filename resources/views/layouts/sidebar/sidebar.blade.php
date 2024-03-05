@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="dashboards-crm.html" class="menu-link">
+                        <a href="{{ route('forecast.index') }}" class="menu-link">
                             <div data-i18n="Forecasting">Forecasting</div>
                         </a>
                     </li>
