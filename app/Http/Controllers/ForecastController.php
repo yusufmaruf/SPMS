@@ -52,13 +52,14 @@ class ForecastController extends Controller
                 for ($i = 0; $i < $totalWeeks - 8; $i++) {
 
                     $x = [];
-                    $selectedWeeks = $weeklySales->slice($i, 8);
+                    $selectedWeeks = $weeklySales->slice(0, 8 + $i);
                     $actual = $weeklySales[$i + 8]->total_quantity;
                     $actualweeks = $weeklySales[$i + 8]->minggu_ke;
                     $y = [];
                     foreach ($selectedWeeks as $sale) {
                         $y[] = $sale->total_quantity;
                     }
+                    $jumlahY = count($y);
                     // $x = [-7, -5, -3, -1, 1, 3, 5, 7];
                     $numX = count($selectedWeeks);
                     if ($numX % 2 == 0) {
@@ -86,9 +87,16 @@ class ForecastController extends Controller
                         $Xy[] = $x[$j] * $y[$j];
                     }
                     $totXy = array_sum($Xy);
-                    $a = $totY / 8;
+                    $a = $totY / $jumlahY;
                     $b = $totXy / $totXkuadrat;
-                    $c = round(($a + ($b * 9)));
+                    $ramal = $x[$numX - 1];
+                    if ($numX % 2 == 0) {
+                        $c = round(($a + ($b * ($ramal + 2))));
+                        $coba = $ramal + 2;
+                    } else {
+                        $c = round(($a + ($b * $ramal + 1)));
+                        $coba = $ramal + 1;
+                    }
                     $d = abs(($actual - $c) / $actual);
                     $mape =  $d * 100;
 
@@ -96,6 +104,7 @@ class ForecastController extends Controller
                     $productResult[] = [
                         'minggu_ke' => $actualweeks,
                         'idProduk' => $idProduk,
+                        'coba' => $coba,
                         'x' => $x,
                         'xkuadrat' => $xkuadrat,
                         'totXkuadrat' => $totXkuadrat,
