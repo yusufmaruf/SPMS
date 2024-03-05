@@ -18,7 +18,6 @@ class ForecastController extends Controller
         $produkIds = SaleDetail::pluck('idProduk')->unique();
         $startDate = now()->subYear()->startOfYear();
         $endDate = now()->endOfMonth();
-        $x = [];
         // dd($startDate, $endDate);
         // Inisialisasi array untuk menyimpan hasil untuk setiap produk
         $result = [];
@@ -27,6 +26,7 @@ class ForecastController extends Controller
         // Inisialisasi total prediksi
         // Loop melalui setiap ID produk
         foreach ($produkIds as $idProduk) {
+            $productResult = [];
             $weeklySales = SaleDetail::select(
                 DB::raw('YEARWEEK(created_at) AS minggu_ke'),
                 'idProduk',
@@ -50,28 +50,31 @@ class ForecastController extends Controller
                 $productResult = [];
                 // Loop untuk menghitung MAPE untuk setiap 8 minggu
                 for ($i = 0; $i < $totalWeeks - 8; $i++) {
-                    $selectedWeeks = $weeklySales->slice($i, 8);
+
+                    $x = [];
+                    $selectedWeeks = $weeklySales->slice(0, 8 + $i);
                     $actual = $weeklySales[$i + 8]->total_quantity;
                     $actualweeks = $weeklySales[$i + 8]->minggu_ke;
                     $y = [];
                     foreach ($selectedWeeks as $sale) {
                         $y[] = $sale->total_quantity;
                     }
-                    $x = [-7, -5, -3, -1, 1, 3, 5, 7];
-                    // $numX = count($selectedWeeks);
-                    // if ($numX % 2 == 0) {
-                    //     $start = - (($numX - 2) / 2) - ($numX / 2);
-                    //     for ($i = 0; $i < $numX; $i++) {
-                    //         $x[] = $start;
-                    //         $start += 2;
-                    //     }
-                    // } else {
-                    //     $start = - (($numX - 1) / 2);
-                    //     for ($i = 0; $i < $numX; $i++) {
-                    //         $x[] = $start;
-                    //         $start++;
-                    //     }
-                    // };
+                    $jumlahY = count($y);
+                    // $x = [-7, -5, -3, -1, 1, 3, 5, 7];
+                    $numX = count($selectedWeeks);
+                    if ($numX % 2 == 0) {
+                        $start = - (($numX - 2) / 2) - ($numX / 2);
+                        for ($k = 0; $k < $numX; $k++) {
+                            $x[] = $start;
+                            $start += 2;
+                        }
+                    } else {
+                        $start = - (($numX - 1) / 2);
+                        for ($k = 0; $k < $numX; $k++) {
+                            $x[] = $start;
+                            $start++;
+                        }
+                    };
 
                     $totX = array_sum($x);
                     $xkuadrat = array_map(function ($value) {
@@ -80,13 +83,20 @@ class ForecastController extends Controller
                     $totXkuadrat = array_sum($xkuadrat);
                     $totY = array_sum($y);
                     $Xy = [];
-                    for ($j = 0; $j < count($x); $j++) {
+                    for ($j = 0; $j < count($y); $j++) {
                         $Xy[] = $x[$j] * $y[$j];
                     }
                     $totXy = array_sum($Xy);
-                    $a = $totY / 8;
+                    $a = $totY / $jumlahY;
                     $b = $totXy / $totXkuadrat;
-                    $c = round(($a + ($b * 9)));
+                    $ramal = $x[$numX - 1];
+                    if ($numX % 2 == 0) {
+                        $c = round(($a + ($b * ($ramal + 2))));
+                        $coba = $ramal + 2;
+                    } else {
+                        $c = round(($a + ($b * $ramal + 1)));
+                        $coba = $ramal + 1;
+                    }
                     $d = abs(($actual - $c) / $actual);
                     $mape =  $d * 100;
 
@@ -94,6 +104,7 @@ class ForecastController extends Controller
                     $productResult[] = [
                         'minggu_ke' => $actualweeks,
                         'idProduk' => $idProduk,
+                        'coba' => $coba,
                         'x' => $x,
                         'xkuadrat' => $xkuadrat,
                         'totXkuadrat' => $totXkuadrat,
