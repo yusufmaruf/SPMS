@@ -23,6 +23,8 @@ class ForecastController extends Controller
         $result = [];
         $totalMape = 0; // Inisialisasi total MAPE
         $totalPredictions = 0;
+
+
         // Inisialisasi total prediksi
         // Loop melalui setiap ID produk
         foreach ($produkIds as $idProduk) {
@@ -41,6 +43,9 @@ class ForecastController extends Controller
                 ->orderBy('minggu_ke', 'asc')
                 ->where('idProduk', $idProduk)
                 ->get();
+            // dd($weeklySales);
+
+
             // dd($weeklySales);
             $totalWeeks = $weeklySales->count();
             // Cek apakah ada data penjualan lebih dari 8 minggu
@@ -87,18 +92,19 @@ class ForecastController extends Controller
                         $Xy[] = $x[$j] * $y[$j];
                     }
                     $totXy = array_sum($Xy);
-                    $a = $totY / $jumlahY;
-                    $b = $totXy / $totXkuadrat;
+                    $a = round($totY / $jumlahY, 5);
+                    $b = round($totXy / $totXkuadrat, 5);
                     $ramal = $x[$numX - 1];
                     if ($numX % 2 == 0) {
                         $c = round(($a + ($b * ($ramal + 2))));
+
                         $coba = $ramal + 2;
                     } else {
-                        $c = round(($a + ($b * $ramal + 1)));
+                        $c = round(($a + ($b * ($ramal + 1))));
                         $coba = $ramal + 1;
                     }
-                    $d = abs(($actual - $c) / $actual);
-                    $mape =  $d * 100;
+                    $d = ($actual - $c) / $actual;
+                    $mape =  abs(round($d * 100));
 
                     // Tambahkan hasil perhitungan untuk setiap 8 minggu ke dalam array productResult
                     $productResult[] = [
@@ -106,6 +112,8 @@ class ForecastController extends Controller
                         'idProduk' => $idProduk,
                         'coba' => $coba,
                         'x' => $x,
+                        'ramal' => $ramal,
+                        'numx' => $numX,
                         'xkuadrat' => $xkuadrat,
                         'totXkuadrat' => $totXkuadrat,
                         'xy' => $Xy,
@@ -126,7 +134,7 @@ class ForecastController extends Controller
             }
         }
         // Hitung rata-rata MAPE
-        $averageMape = $totalMape / $totalPredictions;
+        $averageMape = round(abs($totalMape / $totalPredictions), 0);
         $result['average_mape'] = $averageMape;
         return response()->json($result);
     }
