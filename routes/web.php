@@ -14,6 +14,7 @@ use App\Http\Controllers\ManajemenStokController;
 use App\Http\Controllers\DahboardController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\PlanReceiptController;
+use App\Http\Controllers\PrediksiController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseReportController;
 use App\Http\Controllers\ReportSalesController;
@@ -64,6 +65,7 @@ route::middleware('auth')->group(function () {
     route::resource('pembelian', PurchaseController::class);
     route::resource('reportpurchase', PurchaseReportController::class);
     route::resource('forecast', ForecastController::class);
+    route::resource('prediksi', PrediksiController::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {

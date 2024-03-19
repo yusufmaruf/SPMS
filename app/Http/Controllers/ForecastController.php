@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\SaleDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,59 +15,64 @@ class ForecastController extends Controller
      */
     public function index()
     {
-        // Ambil semua ID produk yang ada di dalam database
+        $totalMape = 0;
+        $totalPredictions = 0;
+        $result = [];
+        $result["data"] = [];
+
+        $product = Product::all();
         $produkIds = SaleDetail::pluck('idProduk')->unique();
         $startDate = now()->subYear()->startOfYear();
-        $endDate = now()->endOfMonth();
-        // dd($startDate, $endDate);
-        // Inisialisasi array untuk menyimpan hasil untuk setiap produk
-        $result = [];
-        $totalMape = 0; // Inisialisasi total MAPE
-        $totalPredictions = 0;
+        $endDate = now()->subWeek()->endOfWeek();
 
-
-        // Inisialisasi total prediksi
-        // Loop melalui setiap ID produk
         foreach ($produkIds as $idProduk) {
+
+
             $productResult = [];
+
             $weeklySales = SaleDetail::select(
-                DB::raw('YEARWEEK(created_at) AS minggu_ke'),
+                DB::raw('YEARWEEK(sale_details.created_at) AS minggu_ke'),
                 'idProduk',
+                'products.name AS product_name',
                 DB::raw('SUM(quantity) AS total_quantity'),
-                DB::raw('COUNT(DISTINCT DAYOFWEEK(created_at)) AS jumlah_hari_dalam_seminggu'), // Menghitung total hari dalam seminggu
-                DB::raw('DATE_ADD(MIN(created_at), INTERVAL(1-DAYOFWEEK(MIN(created_at))) DAY) AS tanggal_awal_minggu'),
-                DB::raw('DATE_ADD(MAX(created_at), INTERVAL(7-DAYOFWEEK(MAX(created_at))) DAY) AS tanggal_akhir_minggu')
+                DB::raw('COUNT(DISTINCT DAYOFWEEK(sale_details.created_at)) AS jumlah_hari_dalam_seminggu'), // Menghitung total hari dalam seminggu
+                DB::raw('DATE_ADD(MIN(sale_details.created_at), INTERVAL(1-DAYOFWEEK(MIN(sale_details.created_at))) DAY) AS tanggal_awal_minggu'),
+                DB::raw('DATE_ADD(MAX(sale_details.created_at), INTERVAL(7-DAYOFWEEK(MAX(sale_details.created_at))) DAY) AS tanggal_akhir_minggu')
             )
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+                ->whereBetween('sale_details.created_at', [$startDate, $endDate])
                 ->groupBy('minggu_ke', 'idProduk')
                 ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
                 ->orderBy('minggu_ke', 'asc')
                 ->where('idProduk', $idProduk)
                 ->get();
-            // dd($weeklySales);
 
-
-            // dd($weeklySales);
             $totalWeeks = $weeklySales->count();
-            // Cek apakah ada data penjualan lebih dari 8 minggu
 
             if ($totalWeeks > 8) {
-                // Inisialisasi array untuk menyimpan hasil perhitungan untuk setiap 8 minggu
+
                 $productResult = [];
-                // Loop untuk menghitung MAPE untuk setiap 8 minggu
+
                 for ($i = 0; $i < $totalWeeks - 8; $i++) {
 
                     $x = [];
+                    $y = [];
+                    $Xy = [];
+
                     $selectedWeeks = $weeklySales->slice(0, 8 + $i);
                     $actual = $weeklySales[$i + 8]->total_quantity;
                     $actualweeks = $weeklySales[$i + 8]->minggu_ke;
-                    $y = [];
+
                     foreach ($selectedWeeks as $sale) {
                         $y[] = $sale->total_quantity;
                     }
+
                     $jumlahY = count($y);
-                    // $x = [-7, -5, -3, -1, 1, 3, 5, 7];
+                    $totY = array_sum($y);
+
+
                     $numX = count($selectedWeeks);
+
                     if ($numX % 2 == 0) {
                         $start = - (($numX - 2) / 2) - ($numX / 2);
                         for ($k = 0; $k < $numX; $k++) {
@@ -82,19 +88,25 @@ class ForecastController extends Controller
                     };
 
                     $totX = array_sum($x);
+
                     $xkuadrat = array_map(function ($value) {
                         return $value * $value;
                     }, $x);
+
                     $totXkuadrat = array_sum($xkuadrat);
-                    $totY = array_sum($y);
-                    $Xy = [];
+
                     for ($j = 0; $j < count($y); $j++) {
                         $Xy[] = $x[$j] * $y[$j];
                     }
+
                     $totXy = array_sum($Xy);
+
                     $a = round($totY / $jumlahY, 5);
+
                     $b = round($totXy / $totXkuadrat, 5);
+
                     $ramal = $x[$numX - 1];
+
                     if ($numX % 2 == 0) {
                         $c = round(($a + ($b * ($ramal + 2))));
 
@@ -103,40 +115,45 @@ class ForecastController extends Controller
                         $c = round(($a + ($b * ($ramal + 1))));
                         $coba = $ramal + 1;
                     }
+
                     $d = ($actual - $c) / $actual;
+
                     $mape =  abs(round($d * 100));
 
+                    $product_name = $weeklySales[$i + 8]->product_name;
                     // Tambahkan hasil perhitungan untuk setiap 8 minggu ke dalam array productResult
-                    $productResult[] = [
+                    $productResult = [
                         'minggu_ke' => $actualweeks,
                         'idProduk' => $idProduk,
+                        'nameProduk' => $product_name,
                         'coba' => $coba,
-                        'x' => $x,
                         'ramal' => $ramal,
                         'numx' => $numX,
-                        'xkuadrat' => $xkuadrat,
                         'totXkuadrat' => $totXkuadrat,
-                        'xy' => $Xy,
                         'a' => $a,
                         'b' => $b,
-                        'y' => $y,
                         'predicted' => $c,
                         'actual' => $actual,
                         'mape' => $mape
                     ];
+
+                    array_push($result['data'], $productResult);
                     $totalMape += $mape;
                     $totalPredictions++;
                 }
 
-                // Tambahkan hasil perhitungan untuk setiap 8 minggu dari produk tersebut ke dalam array result
-                $result[$idProduk] = $productResult;
+
+
                 $x = [];
             }
         }
         // Hitung rata-rata MAPE
         $averageMape = round(abs($totalMape / $totalPredictions), 0);
+        // dd($result);
+
         $result['average_mape'] = $averageMape;
-        return response()->json($result);
+        // return response()->json($result);
+        return view('layouts.admin.Forecast.prediksi', ['result' => $result, 'average_mape' => $averageMape, 'products' => $product]);
     }
     public function prediction()
     {    // Loop melalui setiap ID produk
@@ -203,9 +220,9 @@ class ForecastController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        return view('layouts.admin.Forecast.forecatdetail', ['id' => $id]);
     }
 
     /**
