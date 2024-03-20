@@ -362,7 +362,7 @@ class ForecastController extends Controller
             $y = [];
             $Xy = [];
 
-            $selectedWeeks = $weeklySales->slice(0, $totalWeeks - 1);
+            $selectedWeeks = $weeklySales->slice(0, $totalWeeks);
 
             foreach ($selectedWeeks as $sale) {
                 $y[] = $sale->total_quantity;

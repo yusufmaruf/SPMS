@@ -53,6 +53,7 @@ route::middleware('auth')->group(function () {
     route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
     route::get('forecast/predict', [ForecastController::class, 'prediction'])->name('forecast.prediction');
+    route::get('forecast/prediction/{id}', [ForecastController::class, 'prediction'])->name('forecast.prediction');
     Route::get('data-chart/{id}', [ForecastController::class, 'getData'])->name('forecast.getdata');
 
 
