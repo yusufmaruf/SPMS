@@ -34,6 +34,9 @@ class ProductController extends Controller
             ->addColumn('desc', function ($product) {
                 return '<p>' . $product->description . '</p>';
             })
+            ->addColumn('price', function ($product) {
+                return 'Rp ' . number_format($product->price, 0, ',', '.');
+            })
             ->rawColumns(['aksi', 'desc', 'image'])
             ->make(true);
     }

@@ -29,20 +29,20 @@
                         <tr>
                             <th width="10%">No</th>
                             <th>Tanggal</th>
-                            <th>Produk</th>
-                            <th>Quantity</th>
-                            {{-- <th>cabang</th> --}}
+                            <th>cabang</th>
+                            <th>Name</th>
+                            <th>User</th>
                             <th>total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($saleDetail as $item)
+                        @foreach ($purchase as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->created_at }}</td>
-                                <td>{{ $item->product->name }}</td>
-                                <td>{{ $item->quantity }}</td>
-                                {{-- <td>{{ $item->cabang->name }}</td> --}}
+                                <td>{{ $item->cabang->name }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->user->name }}</td>
                                 <td>{{ number_format($item->total, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach

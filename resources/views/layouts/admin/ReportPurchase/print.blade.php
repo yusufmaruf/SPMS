@@ -17,6 +17,10 @@
         td {
             border: 1px solid black;
         }
+
+        .text-right {
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -29,7 +33,6 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>
-                    <th>Transaksi</th>
                     <th>Cabang</th>
                     <th>User</th>
                     <th>Total</th>
@@ -40,11 +43,10 @@
                 @foreach ($purchase as $purchase)
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $purchase->created_at->format('d F Y') }}</td>
-                        <td>{{ $purchase->name }}</td>
+                        <td>{{ $purchase->formatted_created_at }}</td>
                         <td>{{ $purchase->cabang->name }}</td>
                         <td>{{ $purchase->user->name }}</td>
-                        <td>{{ $purchase->total }}</td>
+                        <td class="text-right">{{ number_format($purchase->total_subtotal, 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
             </tbody>

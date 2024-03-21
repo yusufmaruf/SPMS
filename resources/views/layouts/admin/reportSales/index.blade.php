@@ -41,7 +41,8 @@
                         </div>
                     </div>
                 </form>
-                <a id="download-link" class="btn btn-vimeo d-flex m-4" href="#">Download Laporan</a>
+                <a id="download-link" class="btn btn-vimeo d-flex m-4"
+                    href="{{ route('reportsales.print') }}?dari=&sampai=">Download Laporan</a>
                 <table class="datatables-basic table">
                     <thead>
                         <tr>
@@ -51,6 +52,7 @@
                             <th>cabang</th>
                             <th>User</th>
                             <th>total</th>
+                            <th>aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,6 +96,9 @@
                     },
                     {
                         data: 'total_subtotal'
+                    },
+                    {
+                        data: 'aksi'
                     }
                 ],
             });

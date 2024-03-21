@@ -40,7 +40,8 @@ class CartController extends Controller
 
     public function total()
     {
-        $cart = Cart::where('idUser', Auth::user()->idUser)->sum('total');
+
+        $cart = 'Rp. ' . number_format(Cart::where('idUser', Auth::user()->idUser)->sum('total'), 0, ',', '.');
         return response()->json(
             [
                 'content' => $cart,

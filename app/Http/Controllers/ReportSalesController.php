@@ -44,6 +44,7 @@ class ReportSalesController extends Controller
         )
             ->whereBetween('created_at', [$starDate, $endDate])
             ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
+            ->where('idUser', '=', Auth()->user()->idUser)
             ->get();
         // return view('layouts.admin.ReportSales.print', compact('purchase', 'starDate', 'endDate'));
 
@@ -71,6 +72,7 @@ class ReportSalesController extends Controller
             DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
         )
             ->whereBetween('created_at', [$starDate, $endDate])
+            ->where('idUser', '=', Auth()->user()->idUser)
             ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
             ->get();
 
@@ -86,7 +88,12 @@ class ReportSalesController extends Controller
             ->addColumn('total_subtotal', function ($purchase) {
                 return 'Rp. ' . number_format($purchase->total_subtotal, 0, ',', '.');
             })
-            ->rawColumns(['cabang', 'user', 'total_subtotal'])
+            ->addColumn('aksi', function ($purchase) {
+                return '<div class="btn-group">
+                            <a href="' . route('laporanpenjualan.show', ['laporanpenjualan' => $purchase->formatted_created_at]) . '" class="btn  btn-primary btn-flat">Show</a>
+                        </div>';
+            })
+            ->rawColumns(['cabang', 'user', 'total_subtotal', 'aksi'])
             ->make(true);
     }
 
@@ -112,10 +119,10 @@ class ReportSalesController extends Controller
      */
     public function show($id)
     {
-        $saleDetail = SaleDetail::where('idSales', $id)->with('product')->get();
-        return view('layouts.admin.reportSales.show', [
-            'saleDetail' => $saleDetail
-        ]);
+        $saleDetail = SaleDetail::where(DB::raw("DATE_FORMAT(sale_details.created_at, '%Y-%m-%d')"), $id)
+            ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+            ->where('sales.idUser', '=', Auth()->user()->idUser)->get();
+        return view('layouts.admin.ReportSales.show', compact('saleDetail'));
     }
 
     /**

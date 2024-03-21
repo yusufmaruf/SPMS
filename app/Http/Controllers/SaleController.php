@@ -46,8 +46,10 @@ class SaleController extends Controller
                 $productNames = $cart->products->pluck('name')->implode(', ');
                 return $productNames;
             })
-
-            ->rawColumns(['aksi', 'product_name', 'quantity'])
+            ->addColumn('total', function ($cart) {
+                return 'Rp. ' . number_format($cart->total, 0, ',', '.');
+            })
+            ->rawColumns(['aksi', 'product_name', 'quantity', 'total'])
             ->make(true);
     }
 

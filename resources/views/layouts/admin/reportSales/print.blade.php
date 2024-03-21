@@ -17,6 +17,10 @@
         td {
             border: 1px solid black;
         }
+
+        .text-right {
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -44,7 +48,7 @@
                         <td>{{ $purchase->detailTransactionSale }}</td>
                         <td>{{ $purchase->cabang->name }}</td>
                         <td>{{ $purchase->user->name }}</td>
-                        <td>{{ $purchase->total_subtotal }}</td>
+                        <td class="text-right">{{ $purchase->total_subtotal }}</td>
                     </tr>
                 @endforeach
             </tbody>
