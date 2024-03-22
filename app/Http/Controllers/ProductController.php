@@ -118,22 +118,21 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         try {
             $item = Product::where('idProduct', $id)->first();
-            if ($item->receipt()->count() > 0) {
-
-                return redirect()->route('product.index')->with('error_message_delete', 'Item Tidak Dapat Dihapus');
+            // dd($item->saleDetail()->count());
+            if ($item->saleDetail()->count() > 0 && $item->receipt()->count() > 0) {
+                return redirect()->route('product.index')->with('error_message_delete', 'Item Tidak karena terkait dengan yang lain');
             }
             if ($item->image) {
-
                 Storage::disk('public')->delete($item->image);
             }
             $item->delete();
             return redirect()->route('product.index')->with('success_message_delete', 'Berhasil Dihapus');
         } catch (\Throwable $th) {
-            return redirect()->route('product.index')->with('error_message_delete', 'Item Tidak Dapat Dihapus');
+            return redirect()->route('product.index')->with('error_message_delete', $th->getMessage());
         }
     }
 }

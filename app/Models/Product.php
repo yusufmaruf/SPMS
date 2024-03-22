@@ -23,4 +23,8 @@ class Product extends Model
     {
         return $this->hasMany(Receipt::class, 'idProduct', 'idProduct');
     }
+    public function saleDetail()
+    {
+        return $this->hasMany(SaleDetail::class, 'idProduk', 'idProduct');
+    }
 }
