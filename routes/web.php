@@ -68,11 +68,11 @@ route::middleware('auth')->group(function () {
     route::resource('plantReceipt', PlanReceiptController::class);
     route::resource('pembelian', PurchaseController::class);
     route::resource('reportpurchase', PurchaseReportController::class);
-    route::resource('forecast', ForecastController::class);
     route::resource('prediksi', PrediksiController::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {
+        route::resource('forecast', ForecastController::class);
         route::get('/bahan/data', [BahanBakuController::class, 'data'])->name('bahan.data');
         route::get('/cabang/data', [CabangController::class, 'data'])->name('cabang.data');
         route::resource('cabang', CabangController::class);

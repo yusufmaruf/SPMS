@@ -26,7 +26,7 @@
         </li>
         @if (Auth::user()->role == 'admin')
             <li
-                class="menu-item {{ request()->is('admin/manajemenstok*') || request()->is('forecasting*') ? 'open' : '' }}">
+                class="menu-item {{ request()->is('admin/manajemenstok*') || request()->is('admin/forecast*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons ti ti-api-app"></i>
                     <div data-i18n="Sistem Cerdas"> Sistem Cerdas</div>
@@ -37,7 +37,7 @@
                             <div data-i18n="ManajemenStok">Manajemen Stok</div>
                         </a>
                     </li>
-                    <li class="menu-item">
+                    <li class="menu-item {{ request()->is('admin/forecast*') ? 'active' : '' }}">
                         <a href="{{ route('forecast.index') }}" class="menu-link">
                             <div data-i18n="Forecasting">Forecasting</div>
                         </a>
