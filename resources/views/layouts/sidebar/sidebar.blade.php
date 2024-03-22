@@ -65,7 +65,7 @@
         </li>
 
         @if (Auth::user()->role == 'admin')
-            <li class="menu-item {{ request()->is('bahanbaku*') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->is('admin/bahanbaku*') ? 'active' : '' }}">
                 <a href="{{ route('bahanbaku.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons ti ti-cookie"></i>
                     <div data-i18n="Bahan Baku">Bahan Baku</div>
