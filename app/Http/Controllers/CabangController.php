@@ -106,7 +106,7 @@ class CabangController extends Controller
             if ($item->image) {
                 Storage::disk('public')->delete($item->image);
             }            // Upload foto baru
-            $data['image'] = $request->file('image')->store('assets/category', 'public');
+            $data['image'] = $request->file('image')->store('assets/cabang', 'public');
         }
 
         $data['slug'] = Str::slug($request->name);
@@ -123,7 +123,8 @@ class CabangController extends Controller
     {
         try {
             $item = Cabang::where('idCabang', $id)->first();
-            if ($item->stok()->count() > 0) {
+
+            if ($item->penjualan()->count() > 0 || $item->stok()->count() > 0) {
                 return redirect()->route('cabang.index')->with('error_message_delete', 'Gagal Menghapus Data Dikarenakan data terhubung dengan data lain');
             }
             if ($item->image) {

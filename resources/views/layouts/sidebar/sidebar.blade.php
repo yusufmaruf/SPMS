@@ -71,7 +71,7 @@
                     <div data-i18n="Bahan Baku">Bahan Baku</div>
                 </a>
             </li>
-            <li class="menu-item {{ request()->is('cabang*') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->is('admin/cabang*') ? 'active' : '' }}">
                 <a href="{{ route('cabang.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons ti ti-map-pin"></i>
                     <div data-i18n="Cabang">Cabang</div>
