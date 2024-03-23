@@ -47,7 +47,7 @@ class PurchaseReportController extends Controller
             DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
         )
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('idUser', '=', Auth()->user()->idUser)
+            ->where('idCabang', '=', Auth()->user()->idCabang)
             ->groupBy('idUser',  'idCabang', 'formatted_created_at')
             ->get();
         // return view('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
@@ -76,7 +76,7 @@ class PurchaseReportController extends Controller
             DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
         )
             ->whereBetween('created_at', [$starDate, $endDate])
-            ->where('idUser', '=', Auth()->user()->idUser)
+            ->where('idCabang', '=', Auth()->user()->idCabang)
             ->groupBy('idUser',  'idCabang', 'formatted_created_at')
             ->get();
         return datatables()

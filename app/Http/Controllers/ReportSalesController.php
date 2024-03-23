@@ -44,7 +44,7 @@ class ReportSalesController extends Controller
         )
             ->whereBetween('created_at', [$starDate, $endDate])
             ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
-            ->where('idUser', '=', Auth()->user()->idUser)
+            ->where('idCabang', '=', Auth()->user()->idCabang)
             ->get();
         // return view('layouts.admin.ReportSales.print', compact('purchase', 'starDate', 'endDate'));
 
@@ -72,7 +72,7 @@ class ReportSalesController extends Controller
             DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
         )
             ->whereBetween('created_at', [$starDate, $endDate])
-            ->where('idUser', '=', Auth()->user()->idUser)
+            ->where('idCabang', '=', Auth()->user()->idCabang)
             ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
             ->get();
 

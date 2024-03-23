@@ -49,6 +49,10 @@ class User extends Authenticatable
 
     public function cabang()
     {
-        return $this->belongsTo(Cabang::class, 'idCabang', 'idCabang');
+        return $this->belongsTo(Cabang::class, 'idCabang');
+    }
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'idUser');
     }
 }

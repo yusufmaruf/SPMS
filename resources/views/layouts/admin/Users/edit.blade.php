@@ -12,7 +12,7 @@
         <div class="card">
             <div class="card-datatable table-responsive pt-0">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Tambah Data Karyawan</h5>
+                    <h5 class="card-title mb-0">Update Data Karyawan</h5>
                     <!-- Move the button to the right using ml-auto -->
                 </div>
                 <div class="card-body">

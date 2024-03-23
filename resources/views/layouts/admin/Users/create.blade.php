@@ -44,7 +44,7 @@
                             <label for="role">Role</label>
                             <select required name="role" id="select2basicRole"
                                 class="select2 form-select form-select form-control">
-                                <option value="karyawan">Karyawan</option>
+                                <option value="user">Karyawan</option>
                                 <option value="admin">Admin</option>
                                 <option value="manager">Manager</option>
                             </select>
