@@ -1,5 +1,7 @@
 @extends('layouts.master')
 @push('style')
+    {{-- select 2  --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}">
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
@@ -26,6 +28,15 @@
                 <form id="form-filter" class="m-3" method="get">
                     @csrf
                     <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="">Pilih Cabang</label>
+                            <select name="idCabang" id="idCabang" class="form-select">
+                                <option value="">Semua</option>
+                                @foreach ($cabang as $item)
+                                    <option value="{{ $item->idCabang }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-5">
                             <label class="form-label">Dari Tanggal</label>
                             <input type="date" id="dari" name="dari" class="form-control flatpickr"
@@ -67,8 +78,12 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+
     <script>
         $(document).ready(function() {
+
+            $('#idCabang').select2({});
             let table = $('.datatables-basic').DataTable({
                 responsive: true,
                 processing: true,

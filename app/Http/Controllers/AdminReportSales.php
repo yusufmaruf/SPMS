@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cabang;
 use Illuminate\Http\Request;
 
 class AdminReportSales extends Controller
@@ -11,7 +12,8 @@ class AdminReportSales extends Controller
      */
     public function index()
     {
-        //
+        $cabang = Cabang::all();
+        return view('layouts.admin.ReportSalesAdmin.index', compact('cabang'));
     }
 
     /**

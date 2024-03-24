@@ -149,6 +149,12 @@
                     <div data-i18n="Laporan Pengeluran">Laporan Pengeluran</div>
                 </a>
             </li>
+            <li class="menu-item {{ request()->is('adminReportSales*') ? 'active' : '' }}">
+                <a href="{{ route('adminReportSales.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-report-analytics"></i>
+                    <div data-i18n="Laporan Pemasukan">Laporan Pemasukan</div>
+                </a>
+            </li>
         @endif
     </ul>
 </aside>
