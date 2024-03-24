@@ -116,7 +116,7 @@ class PurchaseReportController extends Controller
     public function show($id)
     {
         $purchase = Purchase::where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), $id)
-            ->where('idUser', '=', Auth()->user()->idUser)->orderBy('created_at', 'desc')
+            ->where('idCabang', '=', Auth()->user()->idCabang)->orderBy('created_at', 'desc')
             ->get();
         return view('layouts.admin.ReportPurchase.show', compact('purchase'));
     }

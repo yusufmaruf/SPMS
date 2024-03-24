@@ -121,7 +121,7 @@ class ReportSalesController extends Controller
     {
         $saleDetail = SaleDetail::where(DB::raw("DATE_FORMAT(sale_details.created_at, '%Y-%m-%d')"), $id)
             ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
-            ->where('sales.idUser', '=', Auth()->user()->idUser)->get();
+            ->where('sales.idCabang', '=', Auth()->user()->idCabang)->get();
         return view('layouts.admin.ReportSales.show', compact('saleDetail'));
     }
 
