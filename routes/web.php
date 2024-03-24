@@ -52,8 +52,10 @@ route::middleware('auth')->group(function () {
     route::get('/plantreceipt/data', [PlanReceiptController::class, 'data'])->name('plantreceipt.data');
     route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
     route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
+    route::get('reportpurchaseadmin/data', [AdminReportPurrchase::class, 'data'])->name('reportpurchaseadmin.data');
     route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
+    route::get('adminreportpurchase/print', [AdminReportPurrchase::class, 'print'])->name('adminreportpurchase.print');
     route::get('forecast/predict', [ForecastController::class, 'prediction'])->name('forecast.prediction');
     route::get('forecast/prediction/{id}', [ForecastController::class, 'prediction'])->name('forecast.prediction');
     Route::get('data-chart/{id}', [ForecastController::class, 'getData'])->name('forecast.getdata');

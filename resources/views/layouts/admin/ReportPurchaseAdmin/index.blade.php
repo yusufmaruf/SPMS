@@ -61,9 +61,8 @@
                         <tr>
                             <th width="10%">No</th>
                             <th>Tanggal</th>
-                            <th>cabang</th>
-                            <th>User</th>
                             <th>total</th>
+                            <th>cabang</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -82,18 +81,17 @@
 
     <script>
         $(document).ready(function() {
-
-            $('#idCabang').select2({});
             let table = $('.datatables-basic').DataTable({
                 responsive: true,
                 processing: true,
                 serverSide: true,
                 autoWidth: false,
                 ajax: {
-                    url: '{{ route('reportpurchase.data') }}',
+                    url: '{{ route('reportpurchaseadmin.data') }}',
                     data: function(d) {
                         d.dari = $('#dari').val(); // Ambil nilai tanggal dari input "dari"
-                        d.sampai = $('#sampai').val(); // Ambil nilai tanggal dari input "sampai"
+                        d.sampai = $('#sampai').val();
+                        d.idCabang = $('#idCabang').val(); // Ambil nilai tanggal dari input "sampai"
                     }
                 },
                 columns: [{
@@ -102,13 +100,10 @@
                         data: 'formatted_created_at',
                     },
                     {
-                        data: 'cabang',
-                    },
-                    {
-                        data: 'user',
-                    },
-                    {
                         data: 'total_subtotal',
+                    },
+                    {
+                        data: 'cabang',
                     },
                     {
                         data: 'aksi',
@@ -121,10 +116,11 @@
                 table.ajax.reload();
 
                 // Setelah menekan tombol "Filter", buatlah tautan unduh laporan yang sesuai dengan tanggal yang telah dipilih
+                let idCabang = $('#idCabang').val();
                 let dari = $('#dari').val();
                 let sampai = $('#sampai').val();
-                let downloadLink = '{{ route('reportpurchase.print') }}?dari=' + dari + '&sampai=' +
-                    sampai;
+                let downloadLink = '{{ route('adminreportpurchase.print') }}?dari=' + dari + '&sampai=' +
+                    sampai + '&idCabang=' + idCabang;
                 $('#download-link').attr('href',
                     downloadLink); // Atur href tautan unduhan dengan URL yang sesuai
             });
