@@ -27,15 +27,13 @@
 <body>
     <div class="container">
         <h2 class="text-center text-bold mt-2">Laporan Penjualan Kebab Si Abah</h2>
-        <h4 class="text-center">Tanggal {{ $starDate->format('d F Y') }} - {{ $endDate->format('d F Y') }}</h4>
+        <h4 class="text-center">Tanggal {{ $startDate->format('d F Y') }} - {{ $endDate->format('d F Y') }}</h4>
         <table class="table table-bordered mt-4 border" border="2">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>
-                    <th>Transaksi</th>
                     <th>Cabang</th>
-                    <th>User</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -45,13 +43,18 @@
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $purchase->formatted_created_at }}</td>
-                        <td>{{ $purchase->detailTransactionSale }}</td>
-                        <td>{{ $purchase->cabang->name }}</td>
-                        <td>{{ $purchase->user->name }}</td>
-                        <td class="text-right">{{ $purchase->total_subtotal }}</td>
+                        <td>
+                            @if ($purchase->cabang)
+                                {{ $purchase->cabang->name }}
+                            @else
+                                Semua Cabang
+                            @endif
+                        </td>
+                        <td class="text-right">{{ number_format($purchase->total_subtotal, 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
+
 
         </table>
     </div>

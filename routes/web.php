@@ -49,11 +49,13 @@ route::middleware('auth')->group(function () {
     route::get('/resep/data', [ReceiptController::class, 'data'])->name('resep.data');
     route::get('/cart/data', [SaleController::class, 'data'])->name('cart.data');
     route::get('/laporanpenjualan/data', [ReportSalesController::class, 'data'])->name('laporanpenjualan.data');
+    route::get('/laporanpenjualanadmin/data', [AdminReportSales::class, 'data'])->name('adminreportpenjualan.data');
     route::get('/plantreceipt/data', [PlanReceiptController::class, 'data'])->name('plantreceipt.data');
     route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
     route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
     route::get('reportpurchaseadmin/data', [AdminReportPurrchase::class, 'data'])->name('reportpurchaseadmin.data');
     route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
+    route::get('reportsalesAdmin/print', [AdminReportSales::class, 'print'])->name('reportsalesadmin.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
     route::get('adminreportpurchase/print', [AdminReportPurrchase::class, 'print'])->name('adminreportpurchase.print');
     route::get('forecast/predict', [ForecastController::class, 'prediction'])->name('forecast.prediction');
