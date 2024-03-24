@@ -1,5 +1,7 @@
 @extends('layouts.master')
 @push('style')
+    {{-- select 2  --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}">
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
@@ -26,6 +28,15 @@
                 <form id="form-filter" class="m-3" method="get">
                     @csrf
                     <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="">Pilih Cabang</label>
+                            <select name="idCabang" id="idCabang" class="form-select">
+                                <option value="">Semua</option>
+                                @foreach ($cabang as $item)
+                                    <option value="{{ $item->idCabang }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-5">
                             <label class="form-label">Dari Tanggal</label>
                             <input type="date" id="dari" name="dari" class="form-control flatpickr"
@@ -42,17 +53,17 @@
                     </div>
                 </form>
                 <a id="download-link" class="btn btn-vimeo d-flex m-4"
-                    href="{{ route('reportsales.print') }}?dari=&sampai=">Download Laporan</a>
+                    href="{{ route('reportpurchase.print') }}?dari=&sampai=">Download
+                    Laporan</a>
+
                 <table class="datatables-basic table">
                     <thead>
                         <tr>
                             <th width="10%">No</th>
                             <th>Tanggal</th>
-                            <th>transaksi</th>
-                            <th>cabang</th>
-                            <th>User</th>
                             <th>total</th>
-                            <th>aksi</th>
+                            <th>cabang</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,6 +77,8 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+
     <script>
         $(document).ready(function() {
             let table = $('.datatables-basic').DataTable({
@@ -74,10 +87,11 @@
                 serverSide: true,
                 autoWidth: false,
                 ajax: {
-                    url: '{{ route('laporanpenjualan.data') }}',
+                    url: '{{ route('reportpurchaseadmin.data') }}',
                     data: function(d) {
                         d.dari = $('#dari').val(); // Ambil nilai tanggal dari input "dari"
-                        d.sampai = $('#sampai').val(); // Ambil nilai tanggal dari input "sampai"
+                        d.sampai = $('#sampai').val();
+                        d.idCabang = $('#idCabang').val(); // Ambil nilai tanggal dari input "sampai"
                     }
                 },
                 columns: [{
@@ -86,19 +100,13 @@
                         data: 'formatted_created_at',
                     },
                     {
-                        data: 'detailTransactionSale'
+                        data: 'total_subtotal',
                     },
                     {
-                        data: 'cabang'
+                        data: 'cabang',
                     },
                     {
-                        data: 'user'
-                    },
-                    {
-                        data: 'total_subtotal'
-                    },
-                    {
-                        data: 'aksi'
+                        data: 'aksi',
                     }
                 ],
             });
@@ -108,10 +116,11 @@
                 table.ajax.reload();
 
                 // Setelah menekan tombol "Filter", buatlah tautan unduh laporan yang sesuai dengan tanggal yang telah dipilih
+                let idCabang = $('#idCabang').val();
                 let dari = $('#dari').val();
                 let sampai = $('#sampai').val();
-                let downloadLink = '{{ route('reportsales.print') }}?dari=' + dari + '&sampai=' +
-                    sampai;
+                let downloadLink = '{{ route('adminreportpurchase.print') }}?dari=' + dari + '&sampai=' +
+                    sampai + '&idCabang=' + idCabang;
                 $('#download-link').attr('href',
                     downloadLink); // Atur href tautan unduhan dengan URL yang sesuai
             });

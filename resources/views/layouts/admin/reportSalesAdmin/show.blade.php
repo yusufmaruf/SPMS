@@ -31,7 +31,7 @@
                             <th>Tanggal</th>
                             <th>Produk</th>
                             <th>Quantity</th>
-                            {{-- <th>cabang</th> --}}
+                            <th>cabang</th>
                             <th>total</th>
                         </tr>
                     </thead>
@@ -42,7 +42,7 @@
                                 <td>{{ $item->created_at }}</td>
                                 <td>{{ $item->product->name }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                {{-- <td>{{ $item->cabang->name }}</td> --}}
+                                <td>{{ $item->cabang }}</td>
                                 <td>{{ number_format($item->total, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach

@@ -29,21 +29,20 @@
                         <tr>
                             <th width="10%">No</th>
                             <th>Tanggal</th>
-                            <th>Produk</th>
-                            <th>Quantity</th>
-                            {{-- <th>cabang</th> --}}
                             <th>total</th>
+                            <th>cabang</th>
+                            <th>aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($saleDetail as $item)
+                        @foreach ($purchase as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->created_at }}</td>
-                                <td>{{ $item->product->name }}</td>
-                                <td>{{ $item->quantity }}</td>
-                                {{-- <td>{{ $item->cabang->name }}</td> --}}
-                                <td>{{ number_format($item->total, 0, ',', '.') }}</td>
+                                <td>{{ $item->formatted_created_at }}</td>
+                                <td>{{ number_format($item->total_subtotal, 0, ',', '.') }}</td>
+                                <td>{{ $item->cabang->name }}</td>
+                                <td><a href="{{ route('adminReportPurchase.show', ['adminReportPurchase' => $item->formatted_created_at, 'idCabang' => $item->idCabang]) }}"
+                                        class="btn btn-vimeo">Detail</a></td>
                             </tr>
                         @endforeach
                     </tbody>

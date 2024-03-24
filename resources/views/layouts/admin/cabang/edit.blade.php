@@ -22,7 +22,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="">Image</label> <br>
-                                <img src="{{ Storage::url($item->image) }}" class="mb-3 mt-2" alt="">
+                                <img src="{{ Storage::url($item->image) }}" class="mb-3 mt-2" alt="" width="100%">
                                 <input type="file" name="image" id="" value="" class="form-control">
                             </div>
                             <div class="mb-3">

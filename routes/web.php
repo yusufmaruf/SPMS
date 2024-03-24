@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminReportPurrchase;
+use App\Http\Controllers\AdminReportSales;
 use App\Models\Receipt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,7 @@ use App\Http\Controllers\ManajemenStokController;
 use App\Http\Controllers\DahboardController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\PlanReceiptController;
+use App\Http\Controllers\PrediksiController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseReportController;
 use App\Http\Controllers\ReportSalesController;
@@ -46,12 +49,20 @@ route::middleware('auth')->group(function () {
     route::get('/resep/data', [ReceiptController::class, 'data'])->name('resep.data');
     route::get('/cart/data', [SaleController::class, 'data'])->name('cart.data');
     route::get('/laporanpenjualan/data', [ReportSalesController::class, 'data'])->name('laporanpenjualan.data');
+    route::get('/laporanpenjualanadmin/data', [AdminReportSales::class, 'data'])->name('adminreportpenjualan.data');
     route::get('/plantreceipt/data', [PlanReceiptController::class, 'data'])->name('plantreceipt.data');
     route::get('/totalcart', [CartController::class, 'total'])->name('cart.total');
     route::get('reportpurchase/data', [PurchaseReportController::class, 'data'])->name('reportpurchase.data');
+    route::get('reportpurchaseadmin/data', [AdminReportPurrchase::class, 'data'])->name('reportpurchaseadmin.data');
     route::get('reportsales/print', [ReportSalesController::class, 'print'])->name('reportsales.print');
+    route::get('reportsalesAdmin/print', [AdminReportSales::class, 'print'])->name('reportsalesadmin.print');
     route::get('reportpurchase/print', [PurchaseReportController::class, 'print'])->name('reportpurchase.print');
+    route::get('adminreportpurchase/print', [AdminReportPurrchase::class, 'print'])->name('adminreportpurchase.print');
     route::get('forecast/predict', [ForecastController::class, 'prediction'])->name('forecast.prediction');
+    route::get('forecast/prediction/{id}', [ForecastController::class, 'prediction'])->name('forecast.prediction');
+    Route::get('data-chart/{id}', [ForecastController::class, 'getData'])->name('forecast.getdata');
+
+
 
     route::resource('stok', StokController::class);
     route::resource('pengguna', UserController::class);
@@ -63,10 +74,13 @@ route::middleware('auth')->group(function () {
     route::resource('plantReceipt', PlanReceiptController::class);
     route::resource('pembelian', PurchaseController::class);
     route::resource('reportpurchase', PurchaseReportController::class);
-    route::resource('forecast', ForecastController::class);
+    route::resource('prediksi', PrediksiController::class);
+    route::resource('adminReportPurchase', AdminReportPurrchase::class);
+    route::resource('adminReportSales', AdminReportSales::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {
+        route::resource('forecast', ForecastController::class);
         route::get('/bahan/data', [BahanBakuController::class, 'data'])->name('bahan.data');
         route::get('/cabang/data', [CabangController::class, 'data'])->name('cabang.data');
         route::resource('cabang', CabangController::class);

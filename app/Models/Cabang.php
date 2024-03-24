@@ -17,4 +17,12 @@ class Cabang extends Model
     {
         return $this->hasMany(Stok::class, 'idCabang', 'idCabang');
     }
+    public function penjualan()
+    {
+        return $this->hasMany(Sale::class, 'idCabang', 'idCabang');
+    }
+    public function user()
+    {
+        return $this->hasMany(User::class, 'idCabang');
+    }
 }

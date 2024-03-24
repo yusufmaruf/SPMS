@@ -34,7 +34,6 @@
                     <th>No</th>
                     <th>Tanggal</th>
                     <th>Cabang</th>
-                    <th>User</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -44,12 +43,18 @@
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $purchase->formatted_created_at }}</td>
-                        <td>{{ $purchase->cabang->name }}</td>
-                        <td>{{ $purchase->user->name }}</td>
+                        <td>
+                            @if ($purchase->cabang)
+                                {{ $purchase->cabang->name }}
+                            @else
+                                Semua Cabang
+                            @endif
+                        </td>
                         <td class="text-right">{{ number_format($purchase->total_subtotal, 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
+
 
         </table>
     </div>

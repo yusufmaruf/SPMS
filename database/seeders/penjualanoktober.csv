@@ -1,9 +1,9 @@
 idUser,idCabang,subtotal,payment,created_at,idSales,detailTransactionSale,idTransaction
 6,5,213000,cash,2023-10-02,1,penjualan 2023-10-02,1
-6,5,200000,cash,2023-10-03,2,penjualan 2023-10-03,1
-6,5,102000,cash,2023-10-05,3,penjualan 2023-10-05,1
-6,5,213000,cash,2023-10-06,4,penjualan 2023-10-06,1
-6,5,200000,cash,2023-10-07,5,penjualan 2023-10-07,1
+6,5,157000,cash,2023-10-03,2,penjualan 2023-10-03,1
+6,5,193000,cash,2023-10-05,3,penjualan 2023-10-05,1
+6,5,237000,cash,2023-10-06,4,penjualan 2023-10-06,1
+6,5,232000,cash,2023-10-07,5,penjualan 2023-10-07,1
 6,5,166000,cash,2023-10-08,6,penjualan 2023-10-08,1
 6,5,130000,cash,2023-10-09,7,penjualan 2023-10-09,1
 6,5,191000,cash,2023-10-10,8,penjualan 2023-10-10,1
@@ -20,7 +20,7 @@ idUser,idCabang,subtotal,payment,created_at,idSales,detailTransactionSale,idTran
 6,5,259000,cash,2023-10-23,19,penjualan 2023-10-23,1
 6,5,193000,cash,2023-10-24,20,penjualan 2023-10-24,1
 6,5,153000,cash,2023-10-25,21,penjualan 2023-10-25,1
-6,5,238000,cash,2023-10-27,22,penjualan 2023-10-27,1
-6,5,322000,cash,2023-10-28,23,penjualan 2023-10-28,1
+6,5,254000,cash,2023-10-27,22,penjualan 2023-10-27,1
+6,5,210000,cash,2023-10-28,23,penjualan 2023-10-28,1
 6,5,80000,cash,2023-10-29,24,penjualan 2023-10-29,1
 6,5,324000,cash,2023-10-30,25,penjualan 2023-10-30,1

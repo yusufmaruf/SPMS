@@ -60,18 +60,20 @@
                     url: '{{ route('pengguna.data') }}',
                 },
                 columns: [{
-                    data: 'DT_RowIndex',
-                }, {
-                    data: 'name',
-                }, {
-                    data: 'email'
-                }, {
-                    data: 'nameCabang',
-                }, {
-                    data: 'role',
-                }, {
-                    data: 'aksi',
-                }],
+                        data: 'DT_RowIndex',
+                    }, {
+                        data: 'name',
+                    }, {
+                        data: 'email'
+                    }, {
+                        data: 'nameCabang',
+                    },
+                    {
+                        data: 'role',
+                    }, {
+                        data: 'aksi',
+                    }
+                ],
             });
         });
     </script>

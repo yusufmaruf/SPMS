@@ -18,7 +18,7 @@ class PurchaseController extends Controller
 
     public function data()
     {
-        $purchase = Purchase::orderBy('created_at', 'desc')->get();
+        $purchase = Purchase::where('idUser', '=', Auth()->user()->idUser)->orderBy('created_at', 'desc')->get();
         return datatables()
             ->of($purchase)
             ->addIndexColumn()
@@ -34,7 +34,10 @@ class PurchaseController extends Controller
             ->addColumn('user', function ($purchase) {
                 return $purchase->user->name;
             })
-            ->rawColumns(['aksi', 'cabang', 'user', 'tanggal'])
+            ->addColumn('harga', function ($purchase) {
+                return 'Rp ' . number_format($purchase->total, 0, ',', '.');
+            })
+            ->rawColumns(['aksi', 'cabang', 'user', 'tanggal', 'harga'])
             ->make(true);
     }
 

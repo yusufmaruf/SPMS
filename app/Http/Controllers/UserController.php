@@ -19,18 +19,17 @@ class UserController extends Controller
 
     public function data()
     {
-        // $product = Product::all();
-        $pengguna = User::orderBy('idUser', 'desc')->get();
+        $user = User::all();
         return datatables()
-            ->of($pengguna)
+            ->of($user)
             ->addIndexColumn()
-            ->addColumn('aksi', function ($pengguna) {
-                return view('layouts.admin.Users.tombol', ['data' => $pengguna]);
+            ->addColumn('aksi', function ($user) {
+                return view('layouts.admin.Users.tombol', ['data' => $user]);
             })
-            ->addColumn('nameCabang', function ($pengguna) {
-                return $pengguna->cabang->name;
+            ->addColumn('nameCabang', function ($user) {
+                return $user->cabang ? $user->cabang->name : 'Cabang Tidak Tersedia';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi', 'nameCabang'])
             ->make(true);
     }
 
@@ -62,7 +61,7 @@ class UserController extends Controller
             'role' => $request->role,
             'idCabang' => $request->idCabang,
         ]);
-        return back()->with('success_message_create', 'Data Berhasil Dibuat');
+        return view('layouts.admin.Users.index')->with('success_message_create', 'Data Berhasil Dibuat');
     }
 
     /**
@@ -111,10 +110,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $user = User::find($id);
-        $user->delete();
-        return back()->with('success_message_delete', 'Data Berhasil Dihapus');
+        $user = User::where('idUser', $id)->first();
+        if ($user->sales()->count() > 0) {
+            return back()->with('error_message_delete', 'Data gagal Dihapus');
+        } else {
+            $user->delete();
+            return back()->with('success_message_delete', 'Data Berhasil Dihapus');
+        }
     }
 }

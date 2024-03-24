@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchase;
 use Carbon\Carbon;
+use App\Models\Sale;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+
+use function Laravel\Prompts\select;
 
 class PurchaseReportController extends Controller
 {
@@ -36,11 +40,17 @@ class PurchaseReportController extends Controller
         if ($request->sampai !== null) {
             $endDate = Carbon::parse($request->sampai);
         }
-        $purchase = Purchase::whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'desc')
+        $purchase = Purchase::select(
+            DB::raw('SUM(total) as total_subtotal'),
+            'idUser',
+            'idCabang',
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
+        )
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('idCabang', '=', Auth()->user()->idCabang)
+            ->groupBy('idUser',  'idCabang', 'formatted_created_at')
             ->get();
         // return view('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
-
         $pdf = FacadePdf::loadView('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
         return $pdf->download('purchase_' . Carbon::now()->format('Ymd') . '.pdf');
     }
@@ -59,24 +69,37 @@ class PurchaseReportController extends Controller
         if ($request->sampai !== null) {
             $endDate = Carbon::parse($request->sampai);
         }
-
-        $purchase = Purchase::whereBetween('created_at', [$starDate, $endDate])
-            ->orderBy('created_at', 'desc')
+        $purchase = Purchase::select(
+            DB::raw('SUM(total) as total_subtotal'),
+            'idUser',
+            'idCabang',
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
+        )
+            ->whereBetween('created_at', [$starDate, $endDate])
+            ->where('idCabang', '=', Auth()->user()->idCabang)
+            ->groupBy('idUser',  'idCabang', 'formatted_created_at')
             ->get();
-
         return datatables()
             ->of($purchase)
             ->addIndexColumn()
             ->addColumn('cabang', function ($purchase) {
                 return $purchase->cabang->name;
             })
-            ->addColumn('tanggal', function ($purchase) {
-                return $purchase->created_at->format('d-m-y');
+            ->addColumn(
+                'user',
+                function ($purchase) {
+                    return $purchase->user->name;
+                }
+            )
+            ->addColumn('total_subtotal', function ($purchase) {
+                return 'Rp. ' . number_format($purchase->total_subtotal, 0, ',', '.');
             })
-            ->addColumn('user', function ($purchase) {
-                return $purchase->user->name;
+            ->addColumn('aksi', function ($purchase) {
+                return '<div class="btn-group">
+                            <a href="' . route('reportpurchase.show', ['reportpurchase' => $purchase->formatted_created_at]) . '" class="btn  btn-primary btn-flat">Show</a>
+                        </div>';
             })
-            ->rawColumns(['cabang', 'user', 'tanggal'])
+            ->rawColumns(['cabang', 'user', 'total_subtotal', 'aksi'])
             ->make(true);
     }
     /**
@@ -90,9 +113,12 @@ class PurchaseReportController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $purchase = Purchase::where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), $id)
+            ->where('idCabang', '=', Auth()->user()->idCabang)->orderBy('created_at', 'desc')
+            ->get();
+        return view('layouts.admin.ReportPurchase.show', compact('purchase'));
     }
 
     /**
