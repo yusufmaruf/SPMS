@@ -97,12 +97,14 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Transaksi</span>
         </li>
-        <li class="menu-item {{ request()->is('penjualan*') ? 'active' : '' }}">
-            <a href="{{ route('penjualan.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
-                <div data-i18n="Penjualan">Penjualan Cabang</div>
-            </a>
-        </li>
+        @if (Auth::user()->role == 'user')
+            <li class="menu-item {{ request()->is('penjualan*') ? 'active' : '' }}">
+                <a href="{{ route('penjualan.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                    <div data-i18n="Penjualan">Penjualan Cabang</div>
+                </a>
+            </li>
+        @endif
         <li class="menu-item {{ request()->is('pembelian*') ? 'active' : '' }}">
             <a href="{{ route('pembelian.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
