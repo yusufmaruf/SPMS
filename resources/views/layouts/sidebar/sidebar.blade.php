@@ -129,17 +129,26 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Laporan Penjualan</span>
         </li>
-        <li class="menu-item  {{ request()->is('reportpurchase*') ? 'active' : '' }}">
-            <a href="{{ route('reportpurchase.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-report-money"></i>
-                <div data-i18n="Laporan Pengeluran">Laporan Pengeluran</div>
-            </a>
-        </li>
-        <li class="menu-item {{ request()->is('laporanpenjualan*') ? 'active' : '' }}">
-            <a href="{{ route('laporanpenjualan.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-report-analytics"></i>
-                <div data-i18n="Laporan Pemasukan">Laporan Pemasukan</div>
-            </a>
-        </li>
+        @if (Auth::user()->role == 'user')
+            <li class="menu-item  {{ request()->is('reportpurchase*') ? 'active' : '' }}">
+                <a href="{{ route('reportpurchase.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-report-money"></i>
+                    <div data-i18n="Laporan Pengeluran">Laporan Pengeluran</div>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->is('laporanpenjualan*') ? 'active' : '' }}">
+                <a href="{{ route('laporanpenjualan.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-report-analytics"></i>
+                    <div data-i18n="Laporan Pemasukan">Laporan Pemasukan</div>
+                </a>
+            </li>
+        @elseif (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+            <li class="menu-item  {{ request()->is('adminReportPurchase*') ? 'active' : '' }}">
+                <a href="{{ route('adminReportPurchase.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-report-money"></i>
+                    <div data-i18n="Laporan Pengeluran">Laporan Pengeluran</div>
+                </a>
+            </li>
+        @endif
     </ul>
 </aside>

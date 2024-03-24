@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cabang;
 use Illuminate\Http\Request;
 
-class AdminReportPurrchase extends Controller
+class AdminReportSales extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $cabang = Cabang::all();
-        return view('layouts.admin.ReportPurchaseAdmin.index', compact('cabang'));
+        //
     }
 
     /**

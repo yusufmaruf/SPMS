@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminReportPurrchase;
+use App\Http\Controllers\AdminReportSales;
 use App\Models\Receipt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +71,8 @@ route::middleware('auth')->group(function () {
     route::resource('pembelian', PurchaseController::class);
     route::resource('reportpurchase', PurchaseReportController::class);
     route::resource('prediksi', PrediksiController::class);
+    route::resource('adminReportPurchase', AdminReportPurrchase::class);
+    route::resource('adminReportSales', AdminReportSales::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {
