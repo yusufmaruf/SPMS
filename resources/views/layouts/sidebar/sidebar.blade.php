@@ -24,7 +24,7 @@
                 <div data-i18n="Dashboard"></div>
             </a>
         </li>
-        @if (Auth::user()->role == 'admin')
+        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
             <li
                 class="menu-item {{ request()->is('admin/manajemenstok*') || request()->is('admin/forecast*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -64,7 +64,7 @@
             </a>
         </li>
 
-        @if (Auth::user()->role == 'admin')
+        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
             <li class="menu-item {{ request()->is('admin/bahanbaku*') ? 'active' : '' }}">
                 <a href="{{ route('bahanbaku.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons ti ti-cookie"></i>

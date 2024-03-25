@@ -23,12 +23,49 @@ class DahboardController extends Controller
         $awalBulan = Carbon::now()->startOfYear();
         $akhirBulan = Carbon::now();
         $totalProduk = Product::count();
+
         if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager') {
-            $totalPenjualan = SaleDetail::whereBetween('created_at', [$awalBulan, $akhirBulan])->sum('quantity');
+            $totalQuantityPenjualan = SaleDetail::whereBetween('created_at', [$awalBulan, $akhirBulan])->sum('quantity');
             $totalPegawai = User::count();
             $totalCabang = Cabang::where('idCabang', '!=', Auth::user()->idCabang)->count();
+            $totalPenjualan = Sale::whereBetween('created_at', [$awalBulan, $akhirBulan])->sum('subtotal');
+            $totalPengeluaran = Purchase::whereBetween('created_at', [$awalBulan, $akhirBulan])->sum('total');
+            $revenue = $totalPenjualan - $totalPengeluaran;
+
+            $dataRevenue = [
+                ['name' => 'Penjualan', 'y' => intval($totalPenjualan)],
+                ['name' => 'Pengeluaran', 'y' => intval($totalPengeluaran)],
+            ];
+
+            $cash = Sale::whereBetween('created_at', [$awalBulan, $akhirBulan])->where('payment', 'cash')->count();
+            $qris = Sale::whereBetween('created_at', [$awalBulan, $akhirBulan])->where('payment', 'qris')->count();
+
+            $dataPembayaran = [
+                ['name' => 'Cash', 'y' => intval($cash)],
+                ['name' => 'QRIS', 'y' => intval($qris)],
+            ];
+
+            $sales = SaleDetail::select('name', DB::raw('SUM(quantity) as total_sales'))
+                ->groupBy('name')
+                ->whereBetween('sale_details.created_at', [$awalBulan, $akhirBulan])
+                ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+                ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+                ->get();
+            $product = Product::select('name')->get();
+            $productSales = [];
+            foreach ($product as $p) {
+                $productSales[$p->name] = 0;
+                foreach ($sales as $s) {
+                    if ($p->name == $s->name) {
+                        $productSales[$p->name] = intval($s->total_sales);
+                    }
+                }
+            }
+
             if (Auth::user()->role == 'admin') {
+                return view('layouts.admin.dashboard.indexadmin', compact('totalProduk', 'productSales',  'dataPembayaran',  'dataRevenue',  'revenue', 'totalQuantityPenjualan', 'totalPenjualan', 'totalPegawai', 'totalCabang'));
             } else {
+                return view('layouts.admin.dashboard.indexadmin', compact('totalProduk', 'productSales',  'dataPembayaran',  'dataRevenue',  'revenue', 'totalQuantityPenjualan', 'totalPenjualan', 'totalPegawai', 'totalCabang'));
             }
         } else {
             $totalQuantityPenjualan = SaleDetail::whereBetween('created_at', [$awalBulan, $akhirBulan])

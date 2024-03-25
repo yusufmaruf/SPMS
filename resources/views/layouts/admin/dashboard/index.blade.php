@@ -98,7 +98,7 @@
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Grafik Penjualan dan Pilelian</h5>
+                        <h5 class="card-title mb-0">Grafik Metode Pembayaran</h5>
                     </div>
                     <div class="card-body">
                         <div id="PiePembayaran"></div>
@@ -108,7 +108,7 @@
             <div class="col-lg-12 mt-3">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Grafik Penjualan dan Pilelian</h5>
+                        <h5 class="card-title mb-0">Grafik Penjualan Produk</h5>
                     </div>
                     <div class="card-body">
                         <div id="barPenjualan"></div>
