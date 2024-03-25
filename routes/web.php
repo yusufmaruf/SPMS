@@ -17,6 +17,7 @@ use App\Http\Controllers\DahboardController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\PlanReceiptController;
 use App\Http\Controllers\PrediksiController;
+use App\Http\Controllers\ProfilleController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseReportController;
 use App\Http\Controllers\ReportSalesController;
@@ -77,6 +78,7 @@ route::middleware('auth')->group(function () {
     route::resource('prediksi', PrediksiController::class);
     route::resource('adminReportPurchase', AdminReportPurrchase::class);
     route::resource('adminReportSales', AdminReportSales::class);
+    route::resource('profille', ProfilleController::class);
 
 
     route::prefix('admin')->middleware('admin')->group(function () {
