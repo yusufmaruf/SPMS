@@ -185,16 +185,25 @@
                 <div id="accordionIcon-meramal" class="accordion-collapse collapse " data-bs-parent="#accordionIcon"
                     style="">
                     <p class="accordion-body px-4">Lihat Detail dan Hasil peramalan</p>
-                    <form id="basic-form" method="post">
+                    <form id="basic-form" method="get"
+                        action="{{ route('forecast.show', ['forecast' => 'idProduct', 'idCabang' => 'idCabang']) }}">
                         @csrf <!-- Include CSRF token for Laravel form submission -->
                         <div class="mb-3 px-4">
                             <label for="name" class="form-label">Name Product</label>
                             <select name="idProduct" id="select2basicproduct"
-                                class="select2 form-select form-select form-control">
+                                class="select2 form-select form-select form-control mb-3">
                                 @foreach ($products as $item)
                                     <option value="{{ $item->idProduct }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
+                            <label for="nameCabang" class="form-label">Pilih Cabang</label>
+                            <select name="idCabang" id="select2basicCabang"
+                                class="select2 form-select form-select form-control mb-3">
+                                @foreach ($cabang as $item)
+                                    <option value="{{ $item->idCabang }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+
                             <button type="submit" class="btn btn-primary w-100 mb-3 mt-4">Submit</button>
                         </div>
                     </form>
@@ -222,20 +231,22 @@
         $(document).ready(function() {
             $('.MinMaxProduk').DataTable({});
             $('#select2basicproduct').select2();
+            $('#select2basicCabang').select2();
+
         });
-        document.getElementById('basic-form').addEventListener('submit', function(event) {
-            // Prevent the default form submission behavior
-            event.preventDefault();
+        // document.getElementById('basic-form').addEventListener('submit', function(event) {
+        //     // Prevent the default form submission behavior
+        //     event.preventDefault();
 
-            // Get the selected product ID
-            var selectedProductId = document.getElementById('select2basicproduct').value;
+        //     // Get the selected product ID
+        //     var selectedProductId = document.getElementById('select2basicproduct').value;
 
-            // Construct the URL based on the selected product ID
-            var url = "{{ route('forecast.show', ['forecast' => ':id']) }}";
-            url = url.replace(':id', selectedProductId);
+        //     // Construct the URL based on the selected product ID
+        //     var url = "{{ route('forecast.show', ['forecast' => ':id']) }}";
+        //     url = url.replace(':id', selectedProductId);
 
-            // Redirect the user to the constructed URL
-            window.location.href = url;
-        });
+        //     // Redirect the user to the constructed URL
+        //     window.location.href = url;
+        // });
     </script>
 @endpush

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cabang;
 use App\Models\Product;
 use App\Models\SaleDetail;
 use Carbon\Carbon;
@@ -16,6 +17,7 @@ class ForecastController extends Controller
      */
     public function index()
     {
+        $cabang = Cabang::all();
         $totalMape = 0;
         $totalPredictions = 0;
         $result = [];
@@ -154,7 +156,7 @@ class ForecastController extends Controller
 
         $result['average_mape'] = $averageMape;
         // return response()->json($result);
-        return view('layouts.admin.Forecast.prediksi', ['result' => $result, 'average_mape' => $averageMape, 'products' => $product]);
+        return view('layouts.admin.Forecast.prediksi', ['cabang' => $cabang, 'result' => $result, 'average_mape' => $averageMape, 'products' => $product]);
     }
 
     /**
@@ -176,8 +178,12 @@ class ForecastController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
+
+        $idProducts = intval($request->idProduct);
+        $idCabangs = intval($request->idCabang);
+        // dd($idProducts);
         $totalMape = 0;
         $totalPredictions = 0;
         $result = [];
@@ -199,12 +205,15 @@ class ForecastController extends Controller
             DB::raw('DATE_ADD(MAX(sale_details.created_at), INTERVAL(7-DAYOFWEEK(MAX(sale_details.created_at))) DAY) AS tanggal_akhir_minggu')
         )
             ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+            ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
             ->whereBetween('sale_details.created_at', [$startDate, $endDate])
             ->groupBy('minggu_ke', 'idProduk')
             ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
             ->orderBy('minggu_ke', 'asc')
-            ->where('idProduk', $id)
+            ->where('idProduk', $idProducts)
+            ->where('idCabang', $idCabangs)
             ->get();
+
 
         $totalWeeks = $weeklySales->count();
 
@@ -291,7 +300,7 @@ class ForecastController extends Controller
                     'a' => $a,
                     'b' => $b,
                     'predicted' => $c,
-                    'actual' => $actual,
+                    'actual' => intval($actual),
                     'mape' => $mape
                 ];
 
@@ -315,14 +324,14 @@ class ForecastController extends Controller
         // dd($result);
 
         $result['average_mape'] = $averageMape;
-        $prediction = $this->prediction($id);
+        $prediction = $this->prediction($idCabangs, $idProducts);
 
 
 
         return view('layouts.admin.Forecast.forecatdetail', ['id' => $id, 'data' => $result, 'average_mape' => $averageMape, 'prediksi' => $prediction]);
     }
 
-    public function prediction($id)
+    public function prediction($idCabangs, $idProducts)
     {
         $totalMape = 0;
         $totalPredictions = 0;
@@ -345,11 +354,13 @@ class ForecastController extends Controller
             DB::raw('DATE_ADD(MAX(sale_details.created_at), INTERVAL(7-DAYOFWEEK(MAX(sale_details.created_at))) DAY) AS tanggal_akhir_minggu')
         )
             ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+            ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
             ->whereBetween('sale_details.created_at', [$startDate, $endDate])
             ->groupBy('minggu_ke', 'idProduk')
             ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
             ->orderBy('minggu_ke', 'asc')
-            ->where('idProduk', $id)
+            ->where('idProduk', $idProducts)
+            ->where('idCabang', $idCabangs)
             ->get();
 
         $totalWeeks = $weeklySales->count();
@@ -440,7 +451,7 @@ class ForecastController extends Controller
             // Tambahkan hasil perhitungan untuk setiap 8 minggu ke dalam array productResult
             $productResult = [
                 'nameProduk' => $product_name,
-                'idProduk' => $id,
+                'idProduk' => $idProducts,
                 'awalminggu1' => $awalminggu1,
                 'akhirminggu1' => $akhirminggu1,
                 'minggu1' => $minggu1,

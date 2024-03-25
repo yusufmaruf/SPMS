@@ -27,7 +27,7 @@
         <div class="card mb-4 ">
             <div class="px-4 py-4">
                 <h3>Grafik peramalan dan data aktual</h3>
-                <div id="chartprediksi">
+                <div id="chart-container">
 
                 </div>
                 <h4>Peramalan Produk Masa Lalu</h4>
@@ -124,82 +124,47 @@
     <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.js"></script>
 
-
     <script>
-        // Declare table as a global variable
-
-        $(document).ready(function() {
-
-            $('.MinMaxProduk').DataTable({});
-            $('.prediction').DataTable({});
-            $('#select2basicproduct').select2();
-
-            var url = window.location.pathname;
-            var urlParts = url.split('/');
-            var id = urlParts[urlParts.length - 1];
-            var url = '/data-chart/' + id;
-
-            console.log(url);
-        });
-
-        document.getElementById('basic-form').addEventListener('submit', function(event) {
-            // Prevent the default form submission behavior
-            event.preventDefault();
-
-            // Get the selected product ID
-            var selectedProductId = document.getElementById('select2basicproduct').value;
-
-            // Construct the URL based on the selected product ID
-            var url = "{{ route('forecast.show', ['forecast' => ':id']) }}";
-            url = url.replace(':id', selectedProductId);
-
-            // Redirect the user to the constructed URL
-            window.location.href = url;
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            var url = window.location.pathname;
-            var urlParts = url.split('/');
-            var id = urlParts[urlParts.length - 1];
-            var url = '/data-chart/' + id;
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    // Panggil fungsi untuk membuat chart di sini dengan data yang diterima
-                    createChart(response.weeks, response.predictions, response.actuals);
-                    console.log(response.categories);
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            var actualData = {!! json_encode($data['data']) !!}; // Data aktual dari controller
+            var predictionData = actualData.map(function(item) {
+                return {
+                    week: item.minggu_ke,
+                    actual: item.actual,
+                    prediction: item.predicted
+                };
             });
+            console.log(predictionData);
 
-        })
-
-        function createChart(categories, predictedData, actualData) {
-            Highcharts.chart('chartprediksi', {
+            Highcharts.chart('chart-container', {
                 title: {
-                    text: 'Prediksi dan Aktual'
+                    text: 'Actual vs Prediction Sales'
                 },
                 xAxis: {
-                    categories: categories
+                    title: {
+                        text: 'Week'
+                    },
+                    categories: predictionData.map(function(item) {
+                        return item.week;
+                    })
                 },
                 yAxis: {
                     title: {
-                        text: 'Nilai'
+                        text: 'Quantity'
                     }
                 },
                 series: [{
-                    name: 'Prediksi',
-                    data: predictedData
+                    name: 'Actual',
+                    data: predictionData.map(function(item) {
+                        return item.actual;
+                    })
                 }, {
-                    name: 'Aktual',
-                    data: actualData
+                    name: 'Prediction',
+                    data: predictionData.map(function(item) {
+                        return item.prediction;
+                    })
                 }]
             });
-        }
+        });
     </script>
 @endpush
