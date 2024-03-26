@@ -113,35 +113,6 @@
             </div>
         </div>
 
-        <div class="card mb-4 ">
-            <div class="accordion-item ">
-                <div class="accordion-header px-4 mt-4 d-flex justify-content-between" id="accordionIconOne">
-                    <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
-                        data-bs-target="#accordionIcon-manajemen" aria-controls="accordionIcon-manajemen"
-                        aria-expanded="false">
-                        <h4>Informasi Manajemen Stok Untuk Minggu Depan </h4>
-                    </button>
-                </div>
-                <div id="accordionIcon-manajemen" class="accordion-collapse collapse " data-bs-parent="#accordionIcon"
-                    style="">
-                    <form id="basic-form" method="get"
-                        action="{{ route('manajemenstok.show', ['manajemenstok' => 'idCabang']) }}">
-                        <div class="mb-3 px-4">
-                            <label for="nameCabang" class="form-label">Pilih Cabang</label>
-                            <select name="idCabang" id="select2basicCabang"
-                                class="select2 form-select form-select form-control mb-2">
-                                @foreach ($cabang as $item)
-                                    <option value="{{ $item->idCabang }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                            <button type="submit" class="btn btn-primary w-100 mb-3 mt-4">Submit</button>
-
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
 
         <div class="card mb-5">
             <div class="card-datatable table-responsive pt-0">

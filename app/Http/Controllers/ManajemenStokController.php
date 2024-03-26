@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cabang;
 use App\Models\SaleDetail;
 use Illuminate\Http\Request;
 use App\Models\ManajemenStok;
@@ -15,6 +16,7 @@ class ManajemenStokController extends Controller
      */
     public function index()
     {
+        $cabang = Cabang::all();
         $tanggalPertamaMingguLalu = Carbon::now()->subWeek()->startOfWeek();
         $tanggalTerakhirMingguLalu = Carbon::now()->subWeek()->endOfWeek();
         $data = SaleDetail::selectRaw('idProduk, products.name as name, SUM(sale_details.quantity) as max_quantity')
@@ -73,7 +75,7 @@ class ManajemenStokController extends Controller
 
 
         // dd($processedData);
-        return view('layouts.admin.manajemenstok.index', ['processedData2' => $processedData2, 'processedData' => $processedData, 'tanggalAwal' => $tanggalPertamaMingguLalu, 'tanggalAkhir' => $tanggalTerakhirMingguLalu]);
+        return view('layouts.admin.manajemenstok.index', ['processedData2' => $processedData2, 'processedData' => $processedData, 'tanggalAwal' => $tanggalPertamaMingguLalu, 'tanggalAkhir' => $tanggalTerakhirMingguLalu, 'cabang' => $cabang]);
     }
 
     /**
@@ -95,9 +97,65 @@ class ManajemenStokController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ManajemenStok $manajemenStok)
+    public function show($id, Request $request)
     {
-        //
+        $idCabang = intval($request->idCabang);
+        $tanggalPertamaMingguLalu = Carbon::now()->subWeek()->startOfWeek();
+        $tanggalTerakhirMingguLalu = Carbon::now()->subWeek()->endOfWeek();
+        $data = SaleDetail::selectRaw('idProduk, products.name as name, SUM(sale_details.quantity) as max_quantity')
+            ->whereBetween('sale_details.created_at', ['2023-10-21', '2023-10-28'])
+            ->groupBy('idProduk')
+            ->join('products', 'sale_details.idProduk', '=', 'products.idproduct')
+            ->join('sales as s', 's.idSales', '=', 'sale_details.idSales')
+            ->where('idCabang', $idCabang)
+            ->get();
+        $processedData = [];
+        foreach ($data as $item) {
+            $AVG_quantity = $item->max_quantity / 7;
+            $safetystock = ($item->max_quantity - $AVG_quantity) * 1;
+            $maximumStock = 2 * ($AVG_quantity * 1) + $safetystock;
+            $minimumStock = ($AVG_quantity * 1) + $safetystock;
+            $processedData[] = (object)[
+                'name' => $item->name,
+                'max_quantity' => $item->max_quantity,
+                'AVG_quantity' => $AVG_quantity,
+                'safetystock' => $safetystock,
+                'minimumStock' => $minimumStock,
+                'maximumStock' => $maximumStock,
+            ];
+        }
+
+        $data2  = DB::table('sale_details as sd')
+            ->join('receipts as r', 'sd.idProduk', '=', 'r.idProduct')
+            ->join('bahan_bakus as bb', 'bb.idBahan', '=', 'r.idBahan')
+            ->join('sales as s', 's.idSales', '=', 'sd.idSales')
+            ->join('cabangs as c', 'c.idCabang', '=', 's.idCabang')
+            ->whereBetween('sd.created_at', ['2023-10-21', '2023-10-28'])
+            ->where('s.idCabang', $idCabang)
+            ->groupBy('bb.name', 'c.name')
+            ->select(
+                'bb.name',
+                'c.name as cabang',
+                DB::raw('SUM(sd.quantity * r.quantity) as total_quantity'),
+            )
+            ->get();
+        $processedData2 = [];
+        foreach ($data2 as $item) {
+            $AVG_quantity = $item->total_quantity / 7;
+            $safetystock = ($item->total_quantity - $AVG_quantity) * 1;
+            $maximumStock = 2 * ($AVG_quantity * 1) + $safetystock;
+            $minimumStock = ($AVG_quantity * 1) + $safetystock;
+            $processedData2[] = (object)[
+                'name' => $item->name,
+                'cabang' => $item->cabang,
+                'total_quantity' => $item->total_quantity,
+                'AVG_quantity' => $AVG_quantity,
+                'safetystock' => round($safetystock),
+                'minimumStock' => round($minimumStock),
+                'maximumStock' => round($maximumStock),
+            ];
+        }
+        return view('layouts.admin.manajemenstok.indexdetail', ['tanggalAwal' => $tanggalPertamaMingguLalu, 'tanggalAkhir' => $tanggalTerakhirMingguLalu, 'processedData2' => $processedData2, 'processedData' => $processedData, 'cabang' => $idCabang]);
     }
 
     /**

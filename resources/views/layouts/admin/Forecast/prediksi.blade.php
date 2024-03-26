@@ -127,7 +127,7 @@
                 <div class="accordion-header px-4 mt-4 d-flex justify-content-between" id="accordionIconOne">
                     <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
                         data-bs-target="#accordionIcon-Data" aria-controls="accordionIcon-Data " aria-expanded="false">
-                        <h4> DATA PERAMALAN SEBELUMNYA</h4>
+                        <h4> Data Prediksi Sebelumnya</h4>
                     </button>
                 </div>
                 <div id="accordionIcon-Data" class="accordion-collapse collapse " data-bs-parent="#accordionIcon"
@@ -179,7 +179,7 @@
                 <div class="accordion-header px-4 mt-4 d-flex justify-content-between" id="accordionIconOne">
                     <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
                         data-bs-target="#accordionIcon-meramal" aria-controls="accordionIcon-meramal" aria-expanded="false">
-                        <h4> Ayo Meramal Masa Depan</h4>
+                        <h4> Prediksi Detail Penjualan</h4>
                     </button>
                 </div>
                 <div id="accordionIcon-meramal" class="accordion-collapse collapse " data-bs-parent="#accordionIcon"
