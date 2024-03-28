@@ -20,7 +20,7 @@ class ManajemenStokController extends Controller
         $tanggalPertamaMingguLalu = Carbon::now()->subWeek()->startOfWeek();
         $tanggalTerakhirMingguLalu = Carbon::now()->subWeek()->endOfWeek();
         $data = SaleDetail::selectRaw('idProduk, products.name as name, SUM(sale_details.quantity) as max_quantity')
-            ->whereBetween('sale_details.created_at', ['2023-10-21', '2023-10-28'])
+            ->whereBetween('sale_details.created_at', ['2023-10-23', '2023-10-28'])
             ->groupBy('idProduk')
             ->join('products', 'sale_details.idProduk', '=', 'products.idproduct')
             ->get();

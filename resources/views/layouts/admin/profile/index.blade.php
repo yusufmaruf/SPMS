@@ -38,7 +38,7 @@
                                     <div class="mb-3 col-md-12">
                                         <label for="name" class="form-label"> Name</label>
                                         <input class="form-control" type="text" id="name" name="name"
-                                            value={{ $item->name }} autofocus />
+                                            value="{{ $item->name }}" autofocus />
                                     </div>
                                     <div class="mb-3 col-md-12">
                                         <label for="email" class="form-label">E-mail</label>
@@ -50,8 +50,8 @@
                                         <span class="text-danger font-weight-light text-sm font-italic">(Masukkan password
                                             Jika Ingin merubahnya.)</span>
                                         <div class="input-group">
-                                            <input required type="password" value="" class="form-control"
-                                                name="password" id="password">
+                                            <input type="password" value="" class="form-control" name="password"
+                                                id="password">
                                             <span class="input-group-text cursor-pointer" id="togglePassword">
                                                 <i class="ti ti-eye-off"></i>
                                             </span>

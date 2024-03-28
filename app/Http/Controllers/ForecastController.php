@@ -207,7 +207,7 @@ class ForecastController extends Controller
             ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
             ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
             ->whereBetween('sale_details.created_at', [$startDate, $endDate])
-            ->groupBy('minggu_ke', 'idProduk')
+            ->groupBy('minggu_ke', 'idProduk', 'product_name')
             ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
             ->orderBy('minggu_ke', 'asc')
             ->where('idProduk', $idProducts)

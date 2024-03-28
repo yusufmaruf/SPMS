@@ -58,7 +58,7 @@
         let table; // Declare table as a global variable
         $(document).ready(function() {
             table = $('.table').DataTable({
-                responsive: true,
+
                 processing: true,
                 serverSide: true,
                 autoWidth: false,
