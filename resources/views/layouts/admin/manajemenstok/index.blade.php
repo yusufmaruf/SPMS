@@ -155,11 +155,12 @@
                         <tr>
                             <th>No</th>
                             <th>nama</th>
-                            <th>Total Permintaan</th>
+                            <th>Total Permintaan Sebelumnya</th>
                             <th>Rata-Rata</th>
                             <th>Safety</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
+                            <th>ROP</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -173,11 +174,12 @@
                                     {{ $no++ }}
                                 </td>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->max_quantity }}</td>
+                                <td>{{ $item->totalPermintaanSebelumnya }}</td>
                                 <td>{{ $item->AVG_quantity }}</td>
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
                                 <td>{{ round($item->maximumStock) }}</td>
+                                <td>{{ $item->rop }}</td>
 
                             </tr>
                         @endforeach
@@ -199,12 +201,13 @@
                         <tr>
                             <th>No</th>
                             <th>nama</th>
-                            <th>cabang</th>
                             <th>Total Permintaan</th>
+                            <th>Permintaan Maximal</th>
                             <th>Rata-Rata</th>
                             <th>Safety</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
+                            <th>ROP</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -218,12 +221,13 @@
                                     {{ $no++ }}
                                 </td>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->cabang }}</td>
-                                <td>{{ $item->total_quantity }}</td>
+                                <td>{{ $item->totalPermintaanSebelumnya }}</td>
+                                <td>{{ $item->maximumpermintaan }}</td>
                                 <td>{{ $item->AVG_quantity }}</td>
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
                                 <td>{{ round($item->maximumStock) }}</td>
+                                <td>{{ $item->rop }}</td>
 
                             </tr>
                         @endforeach

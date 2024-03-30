@@ -22,7 +22,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Data Stok Bahan Baku</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    @if (auth()->user()->role == 'admin')
+                    @if (auth()->user()->role == 'admin' || auth()->user()->role == 'manager')
                         <a href="{{ route('stok.create') }}" class="btn btn-primary ml-auto"><span class="ti ti-plus me-1">
                             </span> Tambah Data</a>
                     @endif
@@ -34,7 +34,7 @@
                             <th>Cabang</th>
                             <th>Bahan Baku</th>
                             <th>Stok</th>
-                            @if (auth()->user()->role == 'admin')
+                            @if (auth()->user()->role == 'admin' || auth()->user()->role == 'manager')
                                 <th width="10%">Action</th>
                             @endif
                         </tr>
@@ -77,7 +77,7 @@
                     data: 'aksi',
                 }],
             });
-            if ("{{ auth()->user()->role }}" === 'admin') {
+            if ("{{ auth()->user()->role }}" === 'admin' || "{{ auth()->user()->role }}" === 'manager') {
                 table.column(4).visible(true); // Kolom 'aksi' memiliki indeks 4 (mulai dari 0)
             } else {
                 table.column(4).visible(false);

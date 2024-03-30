@@ -84,6 +84,27 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-12 mb-3 ">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Informasi Stok
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach ($message as $item)
+                            @if ($item['color'] == 'danger')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $item['message'] }}
+                                </div>
+                            @elseif ($item['color'] == 'warning')
+                                <div class="alert alert-warning" role="alert">
+                                    {{ $item['message'] }}
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">

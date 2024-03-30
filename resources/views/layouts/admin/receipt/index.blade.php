@@ -24,7 +24,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Data Resep</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    @if (Auth::user()->role == 'admin')
+                    @if (Auth::user()->role == 'manager')
                         <a href="{{ route('plantReceipt.create') }}" class="btn btn-primary ml-auto"><span
                                 class="ti ti-plus me-1">
                             </span> Tambah Receipt</a>
@@ -47,7 +47,7 @@
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $item->product->name }}</td>
-                                @if (Auth::user()->role == 'admin')
+                                @if (Auth::user()->role == 'manager')
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('resep.show', $item->idProduct) }}"

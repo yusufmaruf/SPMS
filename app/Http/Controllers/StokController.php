@@ -18,7 +18,7 @@ class StokController extends Controller
     }
     public function data()
     {
-        if (Auth::user()->role == 'admin') {
+        if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager') {
             $stoks = Stok::with('bahan', 'cabang')->get();
         } else {
             $stoks = Stok::with('bahan', 'cabang')->where('idCabang', Auth::user()->idCabang)->get();

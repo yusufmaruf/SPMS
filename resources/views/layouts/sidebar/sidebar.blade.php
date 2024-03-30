@@ -63,8 +63,7 @@
                 <div data-i18n="Stok Bahan Baku">Stok Bahan Baku</div>
             </a>
         </li>
-
-        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
+        @if (Auth::user()->role == 'manager')
             <li class="menu-item {{ request()->is('admin/bahanbaku*') ? 'active' : '' }}">
                 <a href="{{ route('bahanbaku.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons ti ti-cookie"></i>
@@ -77,6 +76,9 @@
                     <div data-i18n="Cabang">Cabang</div>
                 </a>
             </li>
+        @endif
+
+        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
             <li class="menu-item {{ request()->is('pengguna*') ? 'active' : '' }}">
                 <a href="{{ route('pengguna.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons ti ti-users"></i>

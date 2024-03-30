@@ -24,7 +24,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Data Product</h5>
                     <!-- Move the button to the right using ml-auto -->
-                    @if (auth()->user()->role == 'admin')
+                    @if (auth()->user()->role == 'manager')
                         <a href="{{ route('product.create') }}" class="btn btn-primary ml-auto"><span
                                 class="ti ti-plus me-1">
                             </span> Tambah Data</a>
@@ -38,7 +38,7 @@
                             <th>Description</th>
                             <th>Image</th>
                             <th>Price</th>
-                            @if (auth()->user()->role == 'admin')
+                            @if (auth()->user()->role == 'manager')
                                 <th width="10%">Action</th>
                             @endif
                         </tr>
@@ -86,7 +86,7 @@
                 }],
             });
 
-            if ("{{ auth()->user()->role }}" === 'admin') {
+            if ("{{ auth()->user()->role }}" === 'manager') {
                 table.column(5).visible(true); // Kolom 'aksi' memiliki indeks 5 (mulai dari 0)
             } else {
                 table.column(5).visible(false);
