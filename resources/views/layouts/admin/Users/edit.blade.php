@@ -72,8 +72,12 @@
     <script>
         $(function() {
             $('#summernote').summernote();
-            $('#select2basic').select2();
-            $('#select2basicRole').select2();
+            $('#select2basic').select2(
+
+            );
+            $('#select2basicRole').select2(
+
+            );
         })
     </script>
 @endpush
