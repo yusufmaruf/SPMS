@@ -180,19 +180,15 @@ class ForecastController extends Controller
      */
     public function show($id, Request $request)
     {
-
         $idProducts = intval($request->idProduct);
         $idCabangs = intval($request->idCabang);
-        // dd($idProducts);
         $totalMape = 0;
         $totalPredictions = 0;
         $result = [];
         $result["data"] = [];
-
         $produkIds = SaleDetail::pluck('idProduk')->unique();
         $startDate = now()->subYear()->startOfYear();
         $endDate = now()->subWeek()->endOfWeek();
-
         $productResult = [];
 
         $weeklySales = SaleDetail::select(
@@ -214,30 +210,21 @@ class ForecastController extends Controller
             ->where('idCabang', $idCabangs)
             ->get();
 
-
         $totalWeeks = $weeklySales->count();
-
         if ($totalWeeks > 8) {
-
             $productResult = [];
-
             for ($i = 0; $i < $totalWeeks - 8; $i++) {
                 $x = [];
                 $y = [];
                 $Xy = [];
-
                 $selectedWeeks = $weeklySales->slice(0, 8 + $i);
                 $actual = $weeklySales[$i + 8]->total_quantity;
                 $actualweeks = $weeklySales[$i + 8]->minggu_ke;
-
                 foreach ($selectedWeeks as $sale) {
                     $y[] = $sale->total_quantity;
                 }
-
                 $jumlahY = count($y);
                 $totY = array_sum($y);
-
-
                 $numX = count($selectedWeeks);
 
                 if ($numX % 2 == 0) {
@@ -284,7 +271,6 @@ class ForecastController extends Controller
                 }
 
                 $d = ($actual - $c) / $actual;
-
                 $mape =  abs(round($d * 100));
 
                 $product_name = $weeklySales[$i + 8]->product_name;
@@ -309,8 +295,6 @@ class ForecastController extends Controller
                 $totalPredictions++;
             }
 
-
-
             $x = [];
         }
 
@@ -322,11 +306,8 @@ class ForecastController extends Controller
         }
         // $averageMape = round(abs($totalMape / $totalPredictions), 0);
         // dd($result);
-
         $result['average_mape'] = $averageMape;
         $prediction = $this->prediction($idCabangs, $idProducts);
-
-
 
         return view('layouts.admin.Forecast.forecatdetail', ['id' => $id, 'data' => $result, 'average_mape' => $averageMape, 'prediksi' => $prediction]);
     }

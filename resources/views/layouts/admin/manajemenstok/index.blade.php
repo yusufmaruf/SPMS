@@ -53,7 +53,7 @@
                         ketidakpastian dalam permintaan atau pasokan. Rumus menghitung safety Stock sebagai berikut :
                         <br>
                     </p>
-                    <p class="accordion-body px-4 mb-4"> <strong>SS= (Jumlah Permintan-T)×LT <br></strong>
+                    <p class="accordion-body px-4 mb-4"> <strong>SS= (Permintaan maksimum-T)×LT <br></strong>
                         Keterangan : <br>
                         T = rata-rata penjualan <br>
                         LT= lead time (hari) <br>
@@ -146,9 +146,8 @@
         <div class="card mb-5">
             <div class="card-datatable table-responsive pt-0">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Metode Min-Max Produk</h5>
-                    <p>Tanggal awal : {{ $tanggalAwal }}</p>
-                    <p>Tanggal akhir : {{ $tanggalAkhir }}</p>
+                    <h5 class="card-title mb-0">Metode Min-Max Produk </h5>
+                    <p>Untuk Tanggal : {{ $tanggalAwal->format('d/m/Y') }} - {{ $tanggalAkhir->format('d/m/Y') }}</p>
                 </div>
                 <table class="table MinMaxProduk table-dt">
                     <thead>
@@ -160,7 +159,7 @@
                             <th>Safety</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
-                            <th>ROP</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -179,7 +178,7 @@
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
                                 <td>{{ round($item->maximumStock) }}</td>
-                                <td>{{ $item->rop }}</td>
+
 
                             </tr>
                         @endforeach
@@ -193,8 +192,7 @@
             <div class="card-datatable table-responsive pt-0">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Metode Min-Max Bahan Baku</h5>
-                    <p>Tanggal awal : {{ $tanggalAwal }}</p>
-                    <p>Tanggal akhir : {{ $tanggalAkhir }}</p>
+                    <p>Untuk Tanggal : {{ $tanggalAwal->format('d/m/Y') }} - {{ $tanggalAkhir->format('d/m/Y') }}</p>
                 </div>
                 <table class="table MinMaxProduk table-dt">
                     <thead>
@@ -207,7 +205,6 @@
                             <th>Safety</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
-                            <th>ROP</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -227,7 +224,6 @@
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
                                 <td>{{ round($item->maximumStock) }}</td>
-                                <td>{{ $item->rop }}</td>
 
                             </tr>
                         @endforeach

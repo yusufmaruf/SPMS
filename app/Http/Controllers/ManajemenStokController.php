@@ -27,10 +27,11 @@ class ManajemenStokController extends Controller
         $processedData2 = [];
 
         foreach ($products as $product) {
-            $data = SaleDetail::selectRaw('sale_details.idProduk, sale_details.quantity, products.name as name')
+            $data = SaleDetail::selectRaw('sale_details.idProduk, SUM(sale_details.quantity)as quantity, products.name as name')
                 ->whereBetween('sale_details.created_at', ['2023-10-23', '2023-10-28'])
                 ->join('products', 'sale_details.idProduk', '=', 'products.idproduct')
                 ->where('sale_details.idProduk', $product->idProduct)
+                ->groupByRaw('DAYOFWEEK(sale_details.created_at), sale_details.idProduk, products.name')
                 ->get();
             $quantities = $data->pluck('quantity');
             $totalPermintaanSebelumnya = $quantities->sum();
@@ -60,23 +61,22 @@ class ManajemenStokController extends Controller
                 'rop' => $pemesananKembali,
             ];
         }
+
+
         $data2 = DB::table('sale_details as sd')
             ->join('receipts as r', 'sd.idProduk', '=', 'r.idProduct')
             ->join('bahan_bakus as bb', 'bb.idBahan', '=', 'r.idBahan')
             ->whereBetween('sd.created_at', ['2023-10-23', '2023-10-28'])
             ->select(
                 'bb.name as bahan_baku',
-                DB::raw('DATE(sd.created_at) as tanggal'),
                 DB::raw('SUM(sd.quantity * r.quantity) as total_penggunaan')
             )
-            ->groupBy('bb.name', DB::raw('DATE(sd.created_at)'))
+            ->groupBy('bahan_baku', DB::raw('DAYOFWEEK(sd.created_at)'))
             ->get();
+        // dd($data2);
         $uniqueBahanBaku = $data2->pluck('bahan_baku')->unique();
-
-
         foreach ($uniqueBahanBaku as $bahanbaku) {
             $quantities = $data2->where('bahan_baku', $bahanbaku)->pluck('total_penggunaan');
-
             // Periksa apakah $quantities tidak kosong sebelum melakukan operasi
             if ($quantities->isNotEmpty()) {
                 // Hitung total penggunaan sebelumnya
@@ -172,12 +172,11 @@ class ManajemenStokController extends Controller
         $products = Product::all();
         $idCabang = intval($request->idCabang);
         foreach ($products as $product) {
-            $data = SaleDetail::selectRaw('sale_details.idProduk, sale_details.quantity, products.name as name')
+            $data = SaleDetail::selectRaw('sale_details.idProduk, SUM(sale_details.quantity)as quantity, products.name as name')
                 ->whereBetween('sale_details.created_at', ['2023-10-23', '2023-10-28'])
                 ->join('products', 'sale_details.idProduk', '=', 'products.idproduct')
-                ->join('sales as s', 's.idSales', '=', 'sale_details.idSales')
                 ->where('sale_details.idProduk', $product->idProduct)
-                ->where('s.idCabang', $idCabang)
+                ->groupByRaw('DAYOFWEEK(sale_details.created_at), sale_details.idProduk, products.name')
                 ->get();
             $quantities = $data->pluck('quantity');
             $totalPermintaanSebelumnya = $quantities->sum();
@@ -216,10 +215,10 @@ class ManajemenStokController extends Controller
             ->whereBetween('sd.created_at', ['2023-10-23', '2023-10-28'])
             ->select(
                 'bb.name as bahan_baku',
-                DB::raw('DATE(sd.created_at) as tanggal'),
+                // DB::raw('DATE(sd.created_at) as tanggal'),
                 DB::raw('SUM(sd.quantity * r.quantity) as total_penggunaan')
             )
-            ->groupBy('bb.name', DB::raw('DATE(sd.created_at)'))
+            ->groupBy('bahan_baku', DB::raw('DAYOFWEEK(sd.created_at)'))
             ->where('s.idCabang', $idCabang)
             ->get();
         $uniqueBahanBaku = $data2->pluck('bahan_baku')->unique();
