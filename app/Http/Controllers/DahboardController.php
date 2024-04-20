@@ -22,7 +22,7 @@ class DahboardController extends Controller
      */
     public function index()
     {
-        $awalBulan = Carbon::now()->startOfYear();
+        $awalBulan = Carbon::now()->startOfMonth();
         $akhirBulan = Carbon::now();
         $totalProduk = Product::count();
         $message = [];

@@ -33,14 +33,14 @@
                 <h4>Peramalan Produk Masa Lalu</h4>
                 @if ($data['average_mape'] > 0)
                     @if (is_array($data) || is_object($data))
-                        <table class="table MinMaxProduk table-dt">
+                        <table class="table dataprediksi table-responsive">
                             <thead>
                                 <tr>
-                                    <th>Product ID</th>
-                                    <th>Week</th>
-                                    <th>Predicted Quantity</th>
-                                    <th>Actual Quantity</th>
-                                    <th>MAPE (%)</th>
+                                    <td>Product Name</td>
+                                    <td>Week</td>
+                                    <td>Predicted Quantity</td>
+                                    <td>Actual Quantity</td>
+                                    <td>MAPE (%)</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,7 +74,7 @@
                 @if ($data['average_mape'] > 0)
                     {{-- @dd($prediksi); --}}
                     @if (is_array($prediksi) || is_object($prediksi))
-                        <table class="table prediction table-dt">
+                        <table class="table prediction table-responsive">
                             <thead>
                                 <tr>
                                     <th>Product Name</th>
@@ -125,6 +125,24 @@
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.js"></script>
 
     <script>
+        $(document).ready(function() {
+            $('.dataprediksi').DataTable({
+                responsive: true,
+                // processing: true,
+                // serverSide: true,
+                autoWidth: false,
+
+
+            });
+        });
+
+        $(document).ready(function() {
+            $('.prediction').DataTable({
+                responsive: true,
+
+
+            });
+        });
         document.addEventListener('DOMContentLoaded', function() {
             var actualData = {!! json_encode($data['data']) !!}; // Data aktual dari controller
             var predictionData = actualData.map(function(item) {

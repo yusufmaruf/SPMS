@@ -36,17 +36,7 @@ class ManajemenStokController extends Controller
             $quantities = $data->pluck('quantity');
             $totalPermintaanSebelumnya = $quantities->sum();
             $maximumPermintaan = $quantities->max();
-            // Menghitung rata-rata
             $mean = $quantities->avg();
-            // Hitung selisih kuadrat dari masing-masing data dengan rata-rata
-            // $diffSquared = $quantities->map(function ($quantity) use ($mean) {
-            //     return pow($quantity - $mean, 2);
-            // });
-            // // Hitung rata-rata selisih kuadrat
-            // $meanDiffSquared = $diffSquared->avg();
-            // // Hitung deviasi standar (akar kuadrat dari rata-rata selisih kuadrat)
-            // $stdev = round(sqrt($meanDiffSquared), 0);
-            // $safetystock = round(1.645 * $stdev * sqrt(2));
             $safetystock = ($maximumPermintaan - $mean) * 3;
             $maximumStock = 2 * ($mean * 3) + $safetystock;
             $minimumStock = ($mean * 3) + $safetystock;
@@ -175,7 +165,10 @@ class ManajemenStokController extends Controller
             $data = SaleDetail::selectRaw('sale_details.idProduk, SUM(sale_details.quantity)as quantity, products.name as name')
                 ->whereBetween('sale_details.created_at', ['2023-10-23', '2023-10-28'])
                 ->join('products', 'sale_details.idProduk', '=', 'products.idproduct')
+                ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+                ->join('cabangs', 'sales.idCabang', '=', 'cabangs.idCabang')
                 ->where('sale_details.idProduk', $product->idProduct)
+                ->where('cabangs.idCabang', $idCabang)
                 ->groupByRaw('DAYOFWEEK(sale_details.created_at), sale_details.idProduk, products.name')
                 ->get();
             $quantities = $data->pluck('quantity');

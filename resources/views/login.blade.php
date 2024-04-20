@@ -13,7 +13,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href=" {{ asset('assets/img/favicon/favicon.ico') }}" />
+    {{-- <link rel="icon" type="image/x-icon" href=" {{ asset('assets/img/favicon/favicon.ico') }}" /> --}}
 
     {{-- style  --}}
     @include('layouts.style.style')
@@ -77,7 +77,7 @@
                         </a>
                     </div>
                     <!-- /Logo -->
-                    <h3 class="mb-1 fw-bold">Welcome to Vuexy! 👋</h3>
+                    <h3 class="mb-1 fw-bold">Welcome to SPMS! 👋</h3>
                     <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
