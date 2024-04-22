@@ -209,6 +209,7 @@ class ForecastController extends Controller
             ->where('idProduk', $idProducts)
             ->where('idCabang', $idCabangs)
             ->get();
+        // dd($weeklySales);
 
         $totalWeeks = $weeklySales->count();
         if ($totalWeeks > 8) {

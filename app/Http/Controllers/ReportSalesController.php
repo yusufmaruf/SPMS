@@ -46,6 +46,19 @@ class ReportSalesController extends Controller
             ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
             ->where('idCabang', '=', Auth()->user()->idCabang)
             ->get();
+
+        if (Auth()->user()->idCabang == 1) {
+            $purchase = Sale::select(
+                DB::raw('SUM(subtotal) as total_subtotal'),
+                'idUser',
+                'detailTransactionSale',
+                'idCabang',
+                DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
+            )
+                ->whereBetween('created_at', [$starDate, $endDate])
+                ->groupBy('idUser', 'detailTransactionSale', 'idCabang', 'formatted_created_at')
+                ->get();
+        }
         // return view('layouts.admin.ReportSales.print', compact('purchase', 'starDate', 'endDate'));
 
         $pdf = FacadePdf::loadView('layouts.admin.ReportSales.print', compact('purchase', 'starDate', 'endDate'));

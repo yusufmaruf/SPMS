@@ -38,6 +38,8 @@
                                 <tr>
                                     <td>Product Name</td>
                                     <td>Week</td>
+                                    <td>a</td>
+                                    <td>b</td>
                                     <td>Predicted Quantity</td>
                                     <td>Actual Quantity</td>
                                     <td>MAPE (%)</td>
@@ -50,6 +52,8 @@
                                             <tr>
                                                 <td>{{ $prediction['nameProduk'] }}</td>
                                                 <td>{{ $prediction['minggu_ke'] }}</td>
+                                                <td>{{ $prediction['a'] }}</td>
+                                                <td>{{ $prediction['b'] }}</td>
                                                 <td>{{ $prediction['predicted'] }}</td>
                                                 <td>{{ $prediction['actual'] }}</td>
                                                 <td>{{ $prediction['mape'] }}</td>

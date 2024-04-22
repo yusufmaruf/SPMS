@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Illuminate\Support\Facades\Auth;
 
 use function Laravel\Prompts\select;
 
@@ -40,6 +41,7 @@ class PurchaseReportController extends Controller
         if ($request->sampai !== null) {
             $endDate = Carbon::parse($request->sampai);
         }
+
         $purchase = Purchase::select(
             DB::raw('SUM(total) as total_subtotal'),
             'idUser',
@@ -50,6 +52,17 @@ class PurchaseReportController extends Controller
             ->where('idCabang', '=', Auth()->user()->idCabang)
             ->groupBy('idUser',  'idCabang', 'formatted_created_at')
             ->get();
+        if (Auth()->user()->idCabang == 1) {
+            $purchase = Purchase::select(
+                DB::raw('SUM(total) as total_subtotal'),
+                'idUser',
+                'idCabang',
+                DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as formatted_created_at')
+            )
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy('idUser',  'idCabang', 'formatted_created_at')
+                ->get();
+        }
         // return view('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
         $pdf = FacadePdf::loadView('layouts.admin.ReportPurchase.print', compact('purchase', 'startDate', 'endDate'));
         return $pdf->download('purchase_' . Carbon::now()->format('Ymd') . '.pdf');

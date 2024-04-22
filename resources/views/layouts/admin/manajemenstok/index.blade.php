@@ -119,7 +119,7 @@
                     <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
                         data-bs-target="#accordionIcon-manajemen" aria-controls="accordionIcon-manajemen"
                         aria-expanded="false">
-                        <h4>Informasi Manajemen Stok Untuk Minggu Depan </h4>
+                        <h4>Informasi Detail Manajemen Stok </h4>
                     </button>
                 </div>
                 <div id="accordionIcon-manajemen" class="accordion-collapse collapse " data-bs-parent="#accordionIcon"

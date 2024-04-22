@@ -53,7 +53,7 @@
                         ketidakpastian dalam permintaan atau pasokan. Rumus menghitung safety Stock sebagai berikut :
                         <br>
                     </p>
-                    <p class="accordion-body px-4 mb-4"> <strong>SS= (Jumlah Permintan-T)×LT <br></strong>
+                    <p class="accordion-body px-4 mb-4"> <strong>SS= (Permintaan Maximum-T)×LT <br></strong>
                         Keterangan : <br>
                         T = rata-rata penjualan <br>
                         LT= lead time (hari) <br>
@@ -131,7 +131,7 @@
                             <th>Safety</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
-                            <th>ROP</th>
+                            {{-- <th>ROP</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -150,7 +150,7 @@
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
                                 <td>{{ round($item->maximumStock) }}</td>
-                                <td>{{ $item->rop }}</td>
+                                {{-- <td>{{ $item->rop }}</td> --}}
 
                             </tr>
                         @endforeach
@@ -178,7 +178,7 @@
                             <th>Safety</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
-                            <th>ROP</th>
+                            {{-- <th>ROP</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -198,7 +198,7 @@
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
                                 <td>{{ round($item->maximumStock) }}</td>
-                                <td>{{ $item->rop }}</td>
+                                {{-- <td>{{ $item->rop }}</td> --}}
 
                             </tr>
                         @endforeach

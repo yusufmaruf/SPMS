@@ -72,7 +72,7 @@
             <div class="modal-body">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="text-center content-data mb-4">
-                    <h3 class="address-title mb-2">Delete Bahan Baku</h3>
+                    <h3 class="address-title mb-2">Delete Data Purchase</h3>
                     <p class="text-muted address-subtitle">apakah anda yakin akan menghapus data</p>
                 </div>
                 <form id="purchaseDelete" class="row g-3" method="POST" novalidate enctype="multipart/form-data">

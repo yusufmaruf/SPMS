@@ -95,8 +95,8 @@ class DahboardController extends Controller
                         // Hitung maksimum penggunaan
                         $maximumPermintaan = $quantities->max();
                         $safetystock = ($maximumPermintaan - $mean) * 3;
-                        $maximumStock = 2 * ($mean * 3) + $safetystock;
-                        $minimumStock = ($mean * 3) + $safetystock;
+                        $maximumStock = round(2 * ($mean * 3) + $safetystock, 0);
+                        $minimumStock = round(($mean * 3) + $safetystock, 0);
                         $pemesananKembali = round($maximumStock - $minimumStock);
 
                         $stok = DB::table('stoks')

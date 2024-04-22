@@ -18,7 +18,11 @@ class PurchaseController extends Controller
 
     public function data()
     {
-        $purchase = Purchase::where('idUser', '=', Auth()->user()->idUser)->orderBy('created_at', 'desc')->get();
+        $purchase = Purchase::where('idCabang', '=', Auth()->user()->idCabang)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->orderBy('idPurchase', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
         return datatables()
             ->of($purchase)
             ->addIndexColumn()
