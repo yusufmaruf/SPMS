@@ -127,6 +127,7 @@
                             <th>No</th>
                             <th>nama</th>
                             <th>Total Permintaan Sebelumnya</th>
+                            <th>prediksi minggu depan</th>
                             <th>Rata-Rata</th>
                             <th>Safety</th>
                             <th>Minimum</th>
@@ -146,6 +147,7 @@
                                 </td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->totalPermintaanSebelumnya }}</td>
+                                <td>{{ $item->minggu1 }}</td>
                                 <td>{{ $item->AVG_quantity }}</td>
                                 <td>{{ round($item->safetystock) }}</td>
                                 <td>{{ round($item->minimumStock) }}</td>
@@ -173,6 +175,7 @@
                             <th>No</th>
                             <th>nama</th>
                             <th>Total Permintaan</th>
+                            <th>Prediksi Permintaan</th>
                             <th>Permintaan Maximal</th>
                             <th>Rata-Rata</th>
                             <th>Safety</th>
@@ -193,6 +196,7 @@
                                 </td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->totalPermintaanSebelumnya }}</td>
+                                <td>{{ $item->minggu1 }}</td>
                                 <td>{{ $item->maximumpermintaan }}</td>
                                 <td>{{ $item->AVG_quantity }}</td>
                                 <td>{{ round($item->safetystock) }}</td>

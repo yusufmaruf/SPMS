@@ -20,8 +20,8 @@ class ManajemenStokController extends Controller
     public function index()
     {
         $cabang = Cabang::all();
-        $tanggalPertamaMingguLalu = Carbon::now()->subWeek()->startOfWeek();
-        $tanggalTerakhirMingguLalu = Carbon::now()->subWeek()->endOfWeek();
+        $tanggalPertamaMingguLalu = Carbon::now()->startOfWeek();
+        $tanggalTerakhirMingguLalu = Carbon::now()->endOfWeek();
         $products = Product::all();
         $processedData = [];
         $processedData2 = [];
@@ -41,6 +41,93 @@ class ManajemenStokController extends Controller
             $maximumStock = 2 * ($mean * 3) + $safetystock;
             $minimumStock = ($mean * 3) + $safetystock;
             $pemesananKembali = round($maximumStock - $minimumStock);
+
+
+            $startDate = now()->subYear()->startOfYear();
+            $endDate = now()->subWeek()->endOfWeek();
+
+            $weeklySales = SaleDetail::select(
+                DB::raw('YEARWEEK(sale_details.created_at) AS minggu_ke'),
+                'idProduk',
+                'products.name AS product_name',
+                DB::raw('SUM(quantity) AS total_quantity'),
+                DB::raw('COUNT(DISTINCT DAYOFWEEK(sale_details.created_at)) AS jumlah_hari_dalam_seminggu'), // Menghitung total hari dalam seminggu
+                DB::raw('DATE_ADD(MIN(sale_details.created_at), INTERVAL(1-DAYOFWEEK(MIN(sale_details.created_at))) DAY) AS tanggal_awal_minggu'),
+                DB::raw('DATE_ADD(MAX(sale_details.created_at), INTERVAL(7-DAYOFWEEK(MAX(sale_details.created_at))) DAY) AS tanggal_akhir_minggu')
+            )
+                ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+                ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+                ->whereBetween('sale_details.created_at', [$startDate, $endDate])
+                ->groupBy('minggu_ke', 'idProduk')
+                ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
+                ->orderBy('minggu_ke', 'asc')
+                ->where('idProduk', $product->idProduct)
+                ->get();
+
+            $totalWeeks = $weeklySales->count();
+            if ($totalWeeks > 8) {
+                $x = [];
+                $y = [];
+                $Xy = [];
+
+                $selectedWeeks = $weeklySales->slice(0, $totalWeeks);
+                foreach ($selectedWeeks as $sale) {
+                    $y[] = $sale->total_quantity;
+                }
+
+                $jumlahY = count($y);
+                $totY = array_sum($y);
+
+
+                $numX = count($selectedWeeks);
+
+                if ($numX % 2 == 0) {
+                    $start = - (($numX - 2) / 2) - ($numX / 2);
+                    for ($k = 0; $k < $numX; $k++) {
+                        $x[] = $start;
+                        $start += 2;
+                    }
+                } else {
+                    $start = - (($numX - 1) / 2);
+                    for ($k = 0; $k < $numX; $k++) {
+                        $x[] = $start;
+                        $start++;
+                    }
+                };
+
+                $totX = array_sum($x);
+
+                $xkuadrat = array_map(function ($value) {
+                    return $value * $value;
+                }, $x);
+
+                $totXkuadrat = array_sum($xkuadrat);
+
+                for ($j = 0; $j < count($y); $j++) {
+                    $Xy[] = $x[$j] * $y[$j];
+                }
+
+                $totXy = array_sum($Xy);
+
+                $a = round($totY / $jumlahY, 5);
+
+                $b = round($totXy / $totXkuadrat, 5);
+
+                $ramal = $x[$numX - 1];
+
+                if ($numX % 2 == 0) {
+                    $minggu1 = round(($a + ($b * ($ramal + 2))));
+                } else {
+                    $minggu1 = round(($a + ($b * ($ramal + 1))));
+                }
+                $x = [];
+                $y = [];
+                $Xy = [];
+            } else {
+                $minggu1 = 0;
+            }
+
+
             $processedData[] = (object)[
                 'name' => $product->name,
                 'totalPermintaanSebelumnya' => $totalPermintaanSebelumnya,
@@ -49,6 +136,7 @@ class ManajemenStokController extends Controller
                 'minimumStock' => $minimumStock,
                 'maximumStock' => $maximumStock,
                 'rop' => $pemesananKembali,
+                'minggu1' => $minggu1
             ];
         }
 
@@ -80,6 +168,91 @@ class ManajemenStokController extends Controller
                 $minimumStock = ($mean * 3) + $safetystock;
                 $pemesananKembali = round($maximumStock - $minimumStock);
 
+                $weeklySales = SaleDetail::select(
+                    DB::raw('YEARWEEK(sale_details.created_at) AS minggu_ke'),
+                    'bahan_bakus.name AS bahan_baku',
+                    DB::raw('SUM(sale_details.quantity*receipts.quantity) AS total_quantity'),
+                    DB::raw('COUNT(DISTINCT DAYOFWEEK(sale_details.created_at)) AS jumlah_hari_dalam_seminggu'),
+                )
+                    ->join('receipts', 'sale_details.idProduk', '=', 'receipts.idProduct')
+                    ->join('bahan_bakus', 'bahan_bakus.idBahan', '=', 'receipts.idBahan')
+                    ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+                    ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+                    ->whereBetween('sale_details.created_at', [
+                        $startDate, $endDate
+                    ])
+                    ->groupBy('minggu_ke', 'bahan_baku')
+                    ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
+                    ->orderBy('minggu_ke', 'asc')
+                    ->orderBy('minggu_ke', 'asc')
+                    ->where('bahan_bakus.name', $bahanbaku)
+                    ->get();
+
+                $totalWeeks = $weeklySales->count();
+                if ($totalWeeks > 0) {
+                    $x = [];
+                    $y = [];
+                    $Xy = [];
+
+                    $selectedWeeks = $weeklySales->slice(0, $totalWeeks);
+                    foreach ($selectedWeeks as $sale) {
+                        $y[] = $sale->total_quantity;
+                    }
+
+                    $jumlahY = count($y);
+                    $totY = array_sum($y);
+
+
+                    $numX = count($selectedWeeks);
+
+                    if ($numX % 2 == 0) {
+                        $start = - (($numX - 2) / 2) - ($numX / 2);
+                        for ($k = 0; $k < $numX; $k++) {
+                            $x[] = $start;
+                            $start += 2;
+                        }
+                    } else {
+                        $start = - (($numX - 1) / 2);
+                        for ($k = 0; $k < $numX; $k++) {
+                            $x[] = $start;
+                            $start++;
+                        }
+                    };
+
+                    $totX = array_sum($x);
+
+                    $xkuadrat = array_map(function ($value) {
+                        return $value * $value;
+                    }, $x);
+
+                    $totXkuadrat = array_sum($xkuadrat);
+
+                    for ($j = 0; $j < count($y); $j++) {
+                        $Xy[] = $x[$j] * $y[$j];
+                    }
+
+                    $totXy = array_sum($Xy);
+
+                    $a = round($totY / $jumlahY, 5);
+
+                    $b = round($totXy / $totXkuadrat, 5);
+
+                    $ramal = $x[$numX - 1];
+
+                    if (
+                        $numX % 2 == 0
+                    ) {
+                        $minggu1 = round(($a + ($b * ($ramal + 2))));
+                    } else {
+                        $minggu1 = round(($a + ($b * ($ramal + 1))));
+                    }
+                    $x = [];
+                    $y = [];
+                    $Xy = [];
+                } else {
+                    $minggu1 = 0;
+                }
+
                 // Tambahkan data yang diproses ke dalam array
                 $processedData2[] = (object)[
                     'name' => $bahanbaku,
@@ -90,6 +263,7 @@ class ManajemenStokController extends Controller
                     'minimumStock' => $minimumStock,
                     'maximumStock' => $maximumStock,
                     'rop' => $pemesananKembali,
+                    'minggu1' => $minggu1,
                 ];
             }
         }
@@ -174,24 +348,102 @@ class ManajemenStokController extends Controller
             $quantities = $data->pluck('quantity');
             $totalPermintaanSebelumnya = $quantities->sum();
             $maximumPermintaan = $quantities->max();
-            // Menghitung rata-rata
             $mean = $quantities->avg();
-            // Hitung selisih kuadrat dari masing-masing data dengan rata-rata
-            // $diffSquared = $quantities->map(function ($quantity) use ($mean) {
-            //     return pow($quantity - $mean, 2);
-            // });
-            // // Hitung rata-rata selisih kuadrat
-            // $meanDiffSquared = $diffSquared->avg();
-            // // Hitung deviasi standar (akar kuadrat dari rata-rata selisih kuadrat)
-            // $stdev = round(sqrt($meanDiffSquared), 0);
-            // $safetystock = round(1.645 * $stdev * sqrt(2));
             $safetystock = ($maximumPermintaan - $mean) * 3;
             $maximumStock = 2 * ($mean * 3) + $safetystock;
             $minimumStock = ($mean * 3) + $safetystock;
             $pemesananKembali = round($maximumStock - $minimumStock);
+
+
+            $startDate = now()->subYear()->startOfYear();
+            $endDate = now()->subWeek()->endOfWeek();
+
+            $weeklySales = SaleDetail::select(
+                DB::raw('YEARWEEK(sale_details.created_at) AS minggu_ke'),
+                'idProduk',
+                'products.name AS product_name',
+                DB::raw('SUM(quantity) AS total_quantity'),
+                DB::raw('COUNT(DISTINCT DAYOFWEEK(sale_details.created_at)) AS jumlah_hari_dalam_seminggu'), // Menghitung total hari dalam seminggu
+                DB::raw('DATE_ADD(MIN(sale_details.created_at), INTERVAL(1-DAYOFWEEK(MIN(sale_details.created_at))) DAY) AS tanggal_awal_minggu'),
+                DB::raw('DATE_ADD(MAX(sale_details.created_at), INTERVAL(7-DAYOFWEEK(MAX(sale_details.created_at))) DAY) AS tanggal_akhir_minggu')
+            )
+                ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+                ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+                ->whereBetween('sale_details.created_at', [$startDate, $endDate])
+                ->groupBy('minggu_ke', 'idProduk')
+                ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
+                ->orderBy('minggu_ke', 'asc')
+                ->where('idProduk', $product->idProduct)
+                ->where('idCabang', $idCabang)
+                ->get();
+
+            $totalWeeks = $weeklySales->count();
+            if ($totalWeeks > 8) {
+                $x = [];
+                $y = [];
+                $Xy = [];
+
+                $selectedWeeks = $weeklySales->slice(0, $totalWeeks);
+                foreach ($selectedWeeks as $sale) {
+                    $y[] = $sale->total_quantity;
+                }
+
+                $jumlahY = count($y);
+                $totY = array_sum($y);
+
+
+                $numX = count($selectedWeeks);
+
+                if ($numX % 2 == 0) {
+                    $start = - (($numX - 2) / 2) - ($numX / 2);
+                    for ($k = 0; $k < $numX; $k++) {
+                        $x[] = $start;
+                        $start += 2;
+                    }
+                } else {
+                    $start = - (($numX - 1) / 2);
+                    for ($k = 0; $k < $numX; $k++) {
+                        $x[] = $start;
+                        $start++;
+                    }
+                };
+
+                $totX = array_sum($x);
+
+                $xkuadrat = array_map(function ($value) {
+                    return $value * $value;
+                }, $x);
+
+                $totXkuadrat = array_sum($xkuadrat);
+
+                for ($j = 0; $j < count($y); $j++) {
+                    $Xy[] = $x[$j] * $y[$j];
+                }
+
+                $totXy = array_sum($Xy);
+
+                $a = round($totY / $jumlahY, 5);
+
+                $b = round($totXy / $totXkuadrat, 5);
+
+                $ramal = $x[$numX - 1];
+
+                if ($numX % 2 == 0) {
+                    $minggu1 = round(($a + ($b * ($ramal + 2))));
+                } else {
+                    $minggu1 = round(($a + ($b * ($ramal + 1))));
+                }
+                $x = [];
+                $y = [];
+                $Xy = [];
+            } else {
+                $minggu1 = 0;
+            }
+
             $processedData[] = (object)[
                 'name' => $product->name,
                 'totalPermintaanSebelumnya' => $totalPermintaanSebelumnya,
+                'minggu1' => $minggu1,
                 'AVG_quantity' => $mean,
                 'safetystock' => $safetystock,
                 'minimumStock' => $minimumStock,
@@ -199,6 +451,11 @@ class ManajemenStokController extends Controller
                 'rop' => $pemesananKembali,
             ];
         }
+
+
+
+
+
 
         $data2 = DB::table('sale_details as sd')
             ->join('receipts as r', 'sd.idProduk', '=', 'r.idProduct')
@@ -232,6 +489,97 @@ class ManajemenStokController extends Controller
                 $minimumStock = ($mean * 3) + $safetystock;
                 $pemesananKembali = round($maximumStock - $minimumStock);
 
+                $weeklySales = SaleDetail::select(
+                    DB::raw('YEARWEEK(sale_details.created_at) AS minggu_ke'),
+                    'bahan_bakus.name AS bahan_baku',
+                    DB::raw('SUM(sale_details.quantity*receipts.quantity) AS total_quantity'),
+                    DB::raw('COUNT(DISTINCT DAYOFWEEK(sale_details.created_at)) AS jumlah_hari_dalam_seminggu'),
+                )
+                    ->join('receipts', 'sale_details.idProduk', '=', 'receipts.idProduct')
+                    ->join('bahan_bakus', 'bahan_bakus.idBahan', '=', 'receipts.idBahan')
+                    ->join('products', 'sale_details.idProduk', '=', 'products.idProduct')
+                    ->join('sales', 'sale_details.idSales', '=', 'sales.idSales')
+                    ->join('cabangs', 'sales.idCabang', '=', 'cabangs.idCabang')
+                    ->whereBetween('sale_details.created_at', [
+                        $startDate, $endDate
+                    ])
+                    ->groupBy('minggu_ke', 'bahan_baku')
+                    ->having('jumlah_hari_dalam_seminggu', '>=', 4) // Hanya data dengan minimal 3 hari dalam seminggu yang akan diproses
+                    ->orderBy('minggu_ke', 'asc')
+                    ->orderBy('minggu_ke', 'asc')
+                    ->where('bahan_bakus.name', $bahanbaku)
+                    ->where('cabangs.idCabang', $idCabang)
+                    ->get();
+
+                $totalWeeks = $weeklySales->count();
+                if ($totalWeeks > 0) {
+                    $x = [];
+                    $y = [];
+                    $Xy = [];
+
+                    $selectedWeeks = $weeklySales->slice(0, $totalWeeks);
+                    foreach ($selectedWeeks as $sale) {
+                        $y[] = $sale->total_quantity;
+                    }
+
+                    $jumlahY = count($y);
+                    $totY = array_sum($y);
+
+
+                    $numX = count($selectedWeeks);
+
+                    if ($numX % 2 == 0) {
+                        $start = - (($numX - 2) / 2) - ($numX / 2);
+                        for ($k = 0; $k < $numX; $k++) {
+                            $x[] = $start;
+                            $start += 2;
+                        }
+                    } else {
+                        $start = - (($numX - 1) / 2);
+                        for ($k = 0; $k < $numX; $k++) {
+                            $x[] = $start;
+                            $start++;
+                        }
+                    };
+
+                    $totX = array_sum($x);
+
+                    $xkuadrat = array_map(
+                        function ($value) {
+                            return $value * $value;
+                        },
+                        $x
+                    );
+
+                    $totXkuadrat = array_sum($xkuadrat);
+
+                    for ($j = 0; $j < count($y); $j++) {
+                        $Xy[] = $x[$j] * $y[$j];
+                    }
+
+                    $totXy = array_sum($Xy);
+
+                    $a = round($totY / $jumlahY, 5);
+
+                    $b = round($totXy / $totXkuadrat, 5);
+
+                    $ramal = $x[$numX - 1];
+
+                    if (
+                        $numX % 2 == 0
+                    ) {
+                        $minggu1 = round(($a + ($b * ($ramal + 2))));
+                    } else {
+                        $minggu1 = round(($a + ($b * ($ramal + 1))));
+                    }
+                    $x = [];
+                    $y = [];
+                    $Xy = [];
+                } else {
+                    $minggu1 = 0;
+                }
+
+
                 // Tambahkan data yang diproses ke dalam array
                 $processedData2[] = (object)[
                     'name' => $bahanbaku,
@@ -241,6 +589,7 @@ class ManajemenStokController extends Controller
                     'safetystock' => $safetystock,
                     'minimumStock' => $minimumStock,
                     'maximumStock' => $maximumStock,
+                    'minggu1' => $minggu1,
                     'rop' => $pemesananKembali,
                 ];
             }
