@@ -18,6 +18,7 @@ class ProductController extends Controller
         $products = Product::all();
         return view('layouts.admin.product.index', compact('products'));
     }
+
     public function data()
     {
         $product = Product::all();
